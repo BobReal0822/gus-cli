@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "commonjs",
+        "experimentalDecorators": true,
+        "removeComments": true,
+        "noEmitOnError": true,
+        "noImplicitAny": true,
+        "sourceMap": true,
+        "declaration": true,
+        "emitDecoratorMetadata": true,
+        "strictNullChecks": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "stripInternal": true,
+        "skipDefaultLibCheck": true,
+        "newLine": "LF",
+        "outDir": "build",
+        "rootDir": "src"
+    },
+    "exclude": [
+        "node_modules"
+    ],
+    "files": [
+      "src/index.ts"
+    ]
+}
