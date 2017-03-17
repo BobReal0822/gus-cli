@@ -19,9 +19,7 @@
         "rootDir": "src"
     },
     "exclude": [
-        "node_modules"
-    ],
-    "files": [
-      "src/index.ts"
+        "node_modules",
+        "build"
     ]
 }

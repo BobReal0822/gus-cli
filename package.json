@@ -1,15 +1,22 @@
 {
-  "name": "ts-lib",
+  "name": "gus-cli",
   "version": "1.0.0",
   "description": "",
   "main": "build/index.js",
   "typings": "build/index.d.ts",
+  "bin": {
+    "gus": "bin/gus"
+  },
   "scripts": {
+    "dev": "tsc -w",
     "build": "tsc",
     "test": "mocha"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "commander": "^2.9.0",
+    "generator-ts-lib": "^1.0.12",
+    "yeoman-generator": "^1.1.1"
   }
 }
