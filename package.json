@@ -15,6 +15,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@types/chalk": "^0.4.31",
+    "chalk": "^2.0.1",
     "commander": "^2.9.0",
     "generator-ts-lib": "^1.0.12",
     "yeoman-generator": "^1.1.1"

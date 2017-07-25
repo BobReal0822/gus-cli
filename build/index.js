@@ -5,9 +5,14 @@ const commander = require("commander");
 const command_1 = require("./command");
 const utils_1 = require("./utils");
 commander.version(utils_1.getVersion());
+commander.command('link:list <a> <b>')
+    .alias('l')
+    .action((name, options) => {
+    console.log('name & options: ', name, options);
+});
 commander.command('init <name>')
     .description('init a project, which should be [lib | koa | express].')
-    .option("-s, --setup_mode [mode]", "Which setup mode to use")
+    .option('-s, --setup_mode [mode]', 'Which setup mode to use')
     .action((name, options) => {
     command_1.init(name);
 });

@@ -2,15 +2,22 @@
 
 import * as process from 'process';
 import * as commander from 'commander';
+import * as chalk from 'chalk';
 
 import { init } from './command';
 import { getVersion } from './utils';
 
 commander.version(getVersion());
 
+commander.command('link:list <a> <b>')
+    .alias('l')
+    .action((name, options) => {
+        console.log('name & options: ', name, options);
+    });
+
 commander.command('init <name>')
     .description('init a project, which should be [lib | koa | express].')
-    .option("-s, --setup_mode [mode]", "Which setup mode to use")
+    .option('-s, --setup_mode [mode]', 'Which setup mode to use')
     .action((name: string, options: any) => {
         init(name);
     });

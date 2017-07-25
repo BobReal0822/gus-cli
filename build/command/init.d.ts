@@ -1,9 +1,11 @@
-export declare const InitNames: {
-    lib: string;
-    koa: string;
-    express: string;
-};
-export interface InitOptionsInfo {
+export interface InitOptionsInterface {
 }
-export declare const DefaultInitOptions: InitOptionsInfo;
-export declare function init(name: string, options?: InitOptionsInfo): void;
+export interface InitNameInterface {
+    [key: string]: {
+        value: string;
+        desc: string;
+    };
+}
+export declare const DefaultInitOptions: InitOptionsInterface;
+export declare const InitNameMapping: InitNameInterface;
+export declare function init(name: string, options?: InitOptionsInterface): void;

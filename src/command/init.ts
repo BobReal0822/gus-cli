@@ -1,32 +1,58 @@
 /**
- * 
+ *
  */
-import * as Cp from 'child_process';
+import * as ChildProcess from 'child_process';
+import * as Process from 'process';
 
-export const InitNames = {
-  lib: 'lib',
-  koa: 'koa',
-  express: 'express'
+import * as chalk from 'chalk';
+
+const Exec = ChildProcess.exec;
+
+export interface InitOptionsInterface {
+
+}
+
+export interface InitNameInterface {
+    [key: string]: {
+        value: string;
+        desc: string;
+    };
+}
+
+export const  DefaultInitOptions: InitOptionsInterface = {
+
 };
 
-export interface InitOptionsInfo {
-
+export const InitNameMapping: InitNameInterface = {
+    lib: {
+        value: 'yo ts-lib',
+        desc: ''
+    },
+    app: {
+        value: 'yo gus-fe --color',
+        desc: ''
+    }
 };
 
-export const  DefaultInitOptions: InitOptionsInfo = {
+export function init(name: string, options?: InitOptionsInterface) {
+    const command = InitNameMapping[name];
 
-};
+    if (!name || !command) {
+        return;
+    }
 
-export function init(name: string, options?: InitOptionsInfo) {
-  if (!name) {
-    return;
-  }
+    console.log('chalk enable: ', chalk.enabled);
 
-  switch(name) {
-    case InitNames.lib: 
-      Cp.exec('yo ts-lib');
-      break;
-    default: 
-      '';
-  }
+    console.log(`
+        run gus init ${ chalk.yellow(name) } now:
+        begin ${ chalk.yellow(command.value) }${ command.desc && chalk.gray(`(${ command.desc })`) }
+    `);
+
+    const exec = Exec(command.value);
+
+    exec.stdout.pipe(Process.stdout);
+    exec.stderr.pipe(Process.stderr);
+    exec.on('exit', code => {
+        console.log(chalk.red('child process exited with code ' + code.toString()));
+    });
 }
