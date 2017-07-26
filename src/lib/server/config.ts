@@ -3,7 +3,7 @@
  */
 export const view = {
     path: {
-        layout: './layout',
-        home: './home'
+        layout: './dist/page/layout',
+        home: './dist/home'
     }
 };

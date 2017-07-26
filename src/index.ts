@@ -22,7 +22,7 @@ commander.command('init <name>')
         init(name);
     });
 
-commander.command('start <path>')
+commander.command('start <name>')
     .description('start a gus-fe project.')
     .option('-d, --dev', 'setup development environment')
     .action((name: string, options: any) => {

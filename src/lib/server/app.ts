@@ -17,8 +17,8 @@ const register = require('babel-register');
 
 export interface IAppOptions {
     port: number;
-    staticPaths: string[];
-    viewPath: string;
+    staticPaths?: string[];
+    viewPath?: string;
     desc?: string;
 }
 
@@ -53,7 +53,10 @@ const DefaultServerConfig: IServerOptions = {
 
 const DefaultAppOptions: IAppOptions = {
     port: 3000,
-    staticPaths: ['dist'],
+    staticPaths: [
+        'dist',
+        'node_modules'
+    ],
     viewPath: './view'
 };
 
@@ -76,7 +79,7 @@ export class Server {
     private config: IServerOptions;
     static apps: {
         [key: string]: IAppInstance;
-    };
+    } = {};
 
     constructor(options: IServerOptions) {
         console.log('init');
@@ -87,6 +90,7 @@ export class Server {
         // TODO: is port available
         const app = this.apps[name];
 
+        console.log(`start app: ${ name } now in port ${ app.config.port }: \n ${ JSON.stringify(app) }`);
         if (!name || !app) {
             console.log(`app: ${ name } not exist!`);
 
@@ -94,7 +98,7 @@ export class Server {
         }
 
         try {
-            app.instance.listen(app.config.port);
+            // app.instance.listen(app.config.port);
         } catch (err) {
             console.log(`start app:${ name } error!`);
 
@@ -125,9 +129,15 @@ export class Server {
         const router = new Router();
         let app: IAppInstance;
 
+        options = Object.assign({}, DefaultAppOptions, {
+            port: options.port
+        });
+
+        console.log(`\n---init app: ${ name } now with options: ${ JSON.stringify(options) }`);
+        console.log(`\n--- view path: ${ Path.resolve(__dirname, options.viewPath) }`);
         ReactView(instance, {
             extname: 'js',
-            views: Path.join(__dirname, options.viewPath)
+            views: Path.resolve(__dirname, options.viewPath)
             // internals: true
         });
 
@@ -136,7 +146,8 @@ export class Server {
             extensions: [ '.js' ]
         });
 
-        options.staticPaths.map(path => {
+        (options.staticPaths || []).map(path => {
+            console.log(`\n---static path: ${ Path.resolve(path) }`);
             instance.use(Static(Path.resolve(path)));
         });
 
@@ -170,12 +181,14 @@ export class Server {
             console.error('server error: ', err, ctx);
         });
 
-        app = Object.assign({}, {
+        app = Object.assign({}, DefaultAppInstance, {
             app: instance,
             desc: desc || '',
+            config: options,
             created_at: Moment()
-        }, DefaultAppInstance);
+        });
 
+        instance.listen(options.port);
         this.apps[name] = app;
     }
 
