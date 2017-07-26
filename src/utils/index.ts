@@ -9,12 +9,12 @@ const packagePath = Path.join(__dirname, './../..', 'package.json');
 
 /**
  * Get package version.
- * 
+ *
  * @export getVersion
- * @returns {string} 
+ * @returns {string}
  */
 export function getVersion(): string {
-  let packageInfo = JSON.parse(Fs.readFileSync(packagePath, 'utf8'));
+  const packageInfo = JSON.parse(Fs.readFileSync(packagePath, 'utf8'));
 
-  return packageInfo && packageInfo.version || 'unvalid version';
+  return packageInfo && packageInfo.version || 'invalid version!';
 }

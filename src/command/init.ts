@@ -48,11 +48,11 @@ export function init(name: string, options?: InitOptionsInterface) {
         begin ${ chalk.yellow(command.value) }${ command.desc && chalk.gray(`(${ command.desc })`) }
     `);
 
-    const exec = Exec(command.value);
+    const exe = Exec(command.value);
 
-    exec.stdout.pipe(Process.stdout);
-    exec.stderr.pipe(Process.stderr);
-    exec.on('exit', code => {
+    exe.stdout.pipe(Process.stdout);
+    exe.stderr.pipe(Process.stderr);
+    exe.on('exit', code => {
         console.log(chalk.red('child process exited with code ' + code.toString()));
     });
 }

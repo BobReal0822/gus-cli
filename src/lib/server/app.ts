@@ -4,6 +4,7 @@ import * as Koa from 'koa';
 import * as Router from 'koa-router';
 import * as Views from 'koa-views';
 import * as Static from 'koa-static';
+import * as Moment from 'moment';
 // import * as ReactView from 'koa-react-view';
 
 // tslint:disable-next-line
@@ -14,33 +15,119 @@ const register = require('babel-register');
 // import { Server } from './../config';
 
 
-export interface IServerInitOptions {
+export interface IAppOptions {
+    port: number;
+    staticPaths: string[];
+    viewPath: string;
+    desc?: string;
+}
+
+export enum AppStatus {
+    offline = 1,
+    online,
+    deleted
+}
+
+export enum AppTypes {
+    fe = 1
+}
+
+export interface IAppInstance {
+    instance: Koa;
+    config: IAppOptions;
+    status: AppStatus;
+    type: AppTypes;
+    desc: string;
+    created_at: Moment.Moment | undefined;
+    updated_at: Moment.Moment | undefined;
+    deleted_at: Moment.Moment | undefined;
+}
+
+export interface IServerOptions {
 
 }
 
+const DefaultServerConfig: IServerOptions = {
+
+};
+
+const DefaultAppOptions: IAppOptions = {
+    port: 3000,
+    staticPaths: ['dist'],
+    viewPath: './view'
+};
+
+const DefaultAppInstance: IAppInstance = {
+    instance: new Koa(),
+    config: {
+        port: 3000,
+        staticPaths: ['dist'],
+        viewPath: './view'
+    },
+    status: AppStatus.offline,
+    type: AppTypes.fe,
+    desc: '',
+    created_at: Moment(),
+    updated_at: undefined,
+    deleted_at: undefined
+};
+
 export class Server {
-    constructor(options: IServerInitOptions) {
+    private config: IServerOptions;
+    static apps: {
+        [key: string]: IAppInstance;
+    };
+
+    constructor(options: IServerOptions) {
         console.log('init');
+        this.config = Object.assign({}, DefaultServerConfig, options);
     }
 
-    start() {
+    static startApp(name: string) {
+        // TODO: is port available
+        const app = this.apps[name];
 
+        if (!name || !app) {
+            console.log(`app: ${ name } not exist!`);
+
+            return false;
+        }
+
+        try {
+            app.instance.listen(app.config.port);
+        } catch (err) {
+            console.log(`start app:${ name } error!`);
+
+            return false;
+        }
+
+        return true;
     }
 
-    initServer() {
-        const App = new Koa();
+    static stopApp (name: string) {
+        //
+    }
+
+    static deleteApp(name: string): boolean {
+        const app = this.apps[name];
+
+        if (!name || !app) {
+            return false;
+        }
+
+        this.stopApp(name);
+
+        return true;
+    }
+
+    static initApp(name: string, options: IAppOptions = DefaultAppOptions, desc?: string) {
+        const instance = new Koa();
         const router = new Router();
+        let app: IAppInstance;
 
-        // App.use(Views(__dirname + './../server/views', {
-        //   extension: 'hbs',
-        //   map: {
-        //     hbs: 'handlebars'
-        //   }
-        // }));
-
-        ReactView(App, {
+        ReactView(instance, {
             extname: 'js',
-            views: Path.join(__dirname, './view')
+            views: Path.join(__dirname, options.viewPath)
             // internals: true
         });
 
@@ -49,47 +136,47 @@ export class Server {
             extensions: [ '.js' ]
         });
 
-        App.use(Static(Path.resolve('./dist')));
-        App.use(Static(Path.resolve('./node_modules')));
+        options.staticPaths.map(path => {
+            instance.use(Static(Path.resolve(path)));
+        });
 
-        // x-response-time
-        App.use(async (ctx: Koa.Context, next: () => Promise<any>) => {
+        instance.use(async (ctx: Koa.Context, next: () => Promise<any>) => {
             const start: any = new Date();
             await next();
             const ms: any = new Date() as any - start;
 
-            console.log('response: ', ms);
             ctx.set('X-Response-Time', `${ms}ms`);
         });
 
-        // logger
-        // App.use(Logger);
-
         router.get('/', async (ctx: Koa.Context, next: any) => {
-        await next();
+            await next();
 
-        ctx.state = {
-            title: 'Awesome app',
-            viewEngine: 'React',
-            data: {
-            userId: 'b-111',
-            name: 'hahaha'
-            }
-        };
+            ctx.state = {
+                title: 'Awesome app',
+                viewEngine: 'React',
+                data: {
+                    userId: 'b-111',
+                    name: 'hahaha'
+                }
+            };
 
-        return ctx.render('index');
+            return ctx.render('index');
         });
 
-        App.use(router.routes());
-        App.use(router.allowedMethods());
+        instance.use(router.routes());
+        instance.use(router.allowedMethods());
 
-        App.on('error', (err: any, ctx: Koa.Context) => {
+        instance.on('error', (err: any, ctx: Koa.Context) => {
             console.error('server error: ', err, ctx);
         });
 
-        App.listen(this.port);
+        app = Object.assign({}, {
+            app: instance,
+            desc: desc || '',
+            created_at: Moment()
+        }, DefaultAppInstance);
 
-        this.app = App;
+        this.apps[name] = app;
     }
 
 }
