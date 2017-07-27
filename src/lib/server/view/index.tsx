@@ -18,9 +18,7 @@ console.log(`path in view:
 // tslint:disable-next-line
 const Layout = require(Path.resolve(view.path.layout));
 // tslint:disable-next-line
-const Home = require(Path.resolve(view.path.layout));
-
-console.log('Layout value: ', JSON.stringify(Layout));
+const Home = require(Path.resolve(view.path.home));
 
 export interface IPropsInfo {
     title: string;

@@ -133,8 +133,6 @@ export class Server {
             port: options.port
         });
 
-        console.log(`\n---init app: ${ name } now with options: ${ JSON.stringify(options) }`);
-        console.log(`\n--- view path: ${ Path.resolve(__dirname, options.viewPath) }`);
         ReactView(instance, {
             extname: 'js',
             views: Path.resolve(__dirname, options.viewPath)
@@ -147,7 +145,6 @@ export class Server {
         });
 
         (options.staticPaths || []).map(path => {
-            console.log(`\n---static path: ${ Path.resolve(path) }`);
             instance.use(Static(Path.resolve(path)));
         });
 
