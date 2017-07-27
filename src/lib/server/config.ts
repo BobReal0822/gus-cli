@@ -4,6 +4,6 @@
 export const view = {
     path: {
         layout: './dist/page/layout',
-        home: './dist/home'
+        home: './dist/page'
     }
 };
