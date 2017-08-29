@@ -10,15 +10,15 @@ import * as ReactDom from 'react-dom';
 import * as escapeHtml from 'escape-html';
 import { view } from './../config';
 
-console.log(`path in view:
-    layout: ${ Path.resolve(view.path.layout) }
-    Home: ${ Path.resolve(view.path.home) }
-`);
-
 // tslint:disable-next-line
 const Layout = require(Path.resolve(view.path.layout));
 // tslint:disable-next-line
 const Home = require(Path.resolve(view.path.home));
+
+console.log(`path in view:
+    layout: ${ Path.resolve(view.path.layout) }----${ JSON.stringify(Layout) }
+    Home: ${ Path.resolve(view.path.home) } ---${ JSON.stringify(Home) }
+`);
 
 export interface IPropsInfo {
     title: string;
