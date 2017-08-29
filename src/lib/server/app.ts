@@ -5,6 +5,8 @@ import * as Router from 'koa-router';
 import * as Views from 'koa-views';
 import * as Static from 'koa-static';
 import * as Moment from 'moment';
+import { StaticRouter } from 'react-router';
+
 // import * as ReactView from 'koa-react-view';
 
 // tslint:disable-next-line
@@ -156,12 +158,18 @@ export class Server {
             ctx.set('X-Response-Time', `${ms}ms`);
         });
 
-        router.get('/', async (ctx: Koa.Context, next: any) => {
+        process.env.browser = 'app-server';
+
+        console.log('instance.env in server ,', JSON.stringify(instance.env));
+
+        router.get('*', async (ctx: Koa.Context, next: any) => {
             await next();
 
             ctx.state = {
                 title: 'Awesome app',
                 viewEngine: 'React',
+                location: ctx.req.url,
+                context: ctx,
                 data: {
                     userId: 'b-111',
                     name: 'hahaha'

@@ -8,6 +8,7 @@ import * as React from 'react';
 import * as ReactDOMServer from 'react-dom/server';
 import * as ReactDom from 'react-dom';
 import * as escapeHtml from 'escape-html';
+import { StaticRouter } from 'react-router';
 import { view } from './../config';
 
 // tslint:disable-next-line
@@ -23,6 +24,10 @@ console.log(`path in view:
 export interface IPropsInfo {
     title: string;
     data: any;
+    location: string;
+    context: {
+        url?: string;
+    } | undefined;
 }
 
 export interface IStateInfo {
@@ -44,12 +49,18 @@ class Index extends React.Component<IPropsInfo, IStateInfo> {
     }
 
     render() {
-        const { title, data } = this.props;
+        const { title, data, location, context } = this.props;
 
         console.log('t-title: ', title);
 
         const dataScript = `window.__data__ = '${escapeHtml(JSON.stringify(data))}';`;
-        const contentString = ReactDOMServer.renderToString(<Home data={data} />);
+        const contentString = ReactDOMServer.renderToString(
+            <StaticRouter
+                location={ location }
+                context={ context }
+            >
+                <Home data={data} />
+            </StaticRouter>);
 
         return (
             <Layout
