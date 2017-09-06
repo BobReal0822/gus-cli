@@ -70,6 +70,7 @@ class Index extends React.Component<IPropsInfo, IStateInfo> {
             <Layout
                 title={ data.title }
             >
+                <div onClick={ this.test.bind(this) }>this test</div>
                 <div id='content' dangerouslySetInnerHTML={{__html: contentString}} />
                 <script dangerouslySetInnerHTML={{__html: dataScript}} />
             </Layout>

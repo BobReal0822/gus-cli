@@ -19,7 +19,6 @@ const register = require('babel-register');
 
 // import { Server } from './../config';
 
-
 export interface IAppOptions {
     port: number;
     staticPaths?: string[];
