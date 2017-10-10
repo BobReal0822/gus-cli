@@ -1,10 +1,10 @@
-import { Server, IAppOptions } from './../lib/server/app';
+import { IAppOptions, Server } from './../lib/server/app';
 
 
 export function start(name: string) {
     // return '';
     const options: IAppOptions = {
-        port: 3002
+        port: 5000
     };
 
     Server.initApp(name, options);

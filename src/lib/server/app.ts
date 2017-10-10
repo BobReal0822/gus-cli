@@ -162,6 +162,7 @@ export class Server {
 
         (options.staticPaths || []).map(path => {
             instance.use(Static(Path.resolve(path)));
+            instance.use(Static(Path.resolve(path, name)));
         });
 
         instance.use(async (ctx: Koa.Context, next: () => Promise<any>) => {
@@ -174,19 +175,21 @@ export class Server {
 
         process.env.browser = 'app-server';
         router.get('*', async (ctx: Koa.Context, next: any) => {
-            await next();
+            const url = ctx.url || '/';
 
+            await next();
             ctx.state = {
                 app: {
                     name,
                     type: projectType
                 },
                 viewEngine: 'React',
-                location: ctx.req.url,
+                location: url,
                 context: ctx,
                 data: {
                     userId: 'b-111',
-                    name: 'hahaha'
+                    name: 'hahaha',
+                    location: url
                 }
             };
 

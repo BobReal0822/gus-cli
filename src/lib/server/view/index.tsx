@@ -63,7 +63,7 @@ class Index extends React.Component<IPropsInfo, IStateInfo> {
                 location={ location }
                 context={ context }
             >
-                <Home data={data} />
+                <Home data={ data } />
             </StaticRouter>);
 
         return (
