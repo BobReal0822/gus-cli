@@ -2,13 +2,13 @@ import * as Path from 'path';
 
 import * as Koa from 'koa';
 import * as Router from 'koa-router';
-import * as Views from 'koa-views';
 import * as Static from 'koa-static';
+import * as Views from 'koa-views';
+import * as _ from 'lodash';
 import * as Moment from 'moment';
 import { StaticRouter } from 'react-router';
-import * as _ from 'lodash';
 
-import { log, getProjectType } from './../../utils';
+import { getProjectType, log } from './../../utils';
 
 // import * as ReactView from 'koa-react-view';
 
@@ -178,6 +178,11 @@ export class Server {
             const url = ctx.url || '/';
 
             await next();
+            // ctx.set({
+            //     'Access-Control-Allow-Origin': '*',
+            //     'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+            //     'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token'
+            // });
             ctx.state = {
                 app: {
                     name,
