@@ -1,9 +1,9 @@
 // typesrcipr library src index.
 
-import * as process from 'process';
-import * as commander from 'commander';
 import * as chalk from 'chalk';
-import { prompt, Question, Answers } from 'inquirer';
+import * as commander from 'commander';
+import { Answers, prompt, Question } from 'inquirer';
+import * as process from 'process';
 
 import { init, start } from './command';
 import { getVersion, log } from './utils';
@@ -72,3 +72,5 @@ commander.command('test <dir> [otherDirs...]')
     });
 
 commander.parse(process.argv);
+
+export const GusCli = {};

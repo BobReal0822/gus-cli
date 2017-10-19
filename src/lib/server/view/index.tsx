@@ -4,10 +4,10 @@
  */
 import * as Path from 'path';
 
-import * as React from 'react';
-import * as ReactDOMServer from 'react-dom/server';
-import * as ReactDom from 'react-dom';
 import * as escapeHtml from 'escape-html';
+import * as React from 'react';
+import * as ReactDom from 'react-dom';
+import * as ReactDOMServer from 'react-dom/server';
 import { StaticRouter } from 'react-router';
 
 import { ProjectTypes } from './../app';

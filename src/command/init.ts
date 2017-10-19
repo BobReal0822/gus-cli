@@ -1,12 +1,12 @@
 /**
  *
  */
-import { exec, ChildProcess } from 'child_process';
+import { ChildProcess, exec } from 'child_process';
 import * as Path from 'path';
 import * as Process from 'process';
-import { log, getProjectType } from './../utils';
+import { getProjectType, log } from './../utils';
 
-import * as chalk from 'chalk';
+import { default as chalk } from 'chalk';
 
 export interface InitOptionsInterface {
 

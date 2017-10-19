@@ -2,9 +2,9 @@
  * utils for gus-cli
  */
 
-import * as Path from 'path';
+import { default as chalk } from 'chalk';
 import * as Fs from 'fs';
-import * as chalk from 'chalk';
+import * as Path from 'path';
 
 // export const projectTypesMapping = {
 //     app: 'app',
