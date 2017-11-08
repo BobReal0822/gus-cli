@@ -2,7 +2,6 @@
 logs
 *.log
 npm-debug.log*
-build
 
 # Runtime data
 pids
@@ -25,7 +24,6 @@ coverage
 .lock-wscript
 
 # Compiled binary addons (http://nodejs.org/api/addons.html)
-build
 
 # Dependency directories
 node_modules
@@ -39,3 +37,5 @@ jspm_packages
 
 # local
 .DS_Store
+package-lock.json
+dist
