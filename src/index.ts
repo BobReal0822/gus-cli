@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import * as chalk from 'chalk';
 import * as cmd from 'commander';
 import * as process from 'process';
