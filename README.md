@@ -18,3 +18,10 @@ ts-lib  [![npm](https://img.shields.io/npm/v/npm.svg)](https://www.npmjs.com/pac
 ```bash
 
 ```
+
+### command
+init
+start
+list
+stop
+dev

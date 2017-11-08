@@ -4,7 +4,7 @@
         "module": "commonjs",
         "jsx": "react",
         "experimentalDecorators": true,
-        "removeComments": true,
+        "removeComments": false,
         "noEmitOnError": true,
         "noImplicitAny": true,
         "sourceMap": true,

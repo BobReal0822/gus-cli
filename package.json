@@ -1,11 +1,11 @@
 {
-  "name": "gus-cli",
+  "name": "light",
   "version": "1.0.0",
   "description": "",
   "main": "build/index.js",
   "typings": "build/index.d.ts",
   "bin": {
-    "gus": "bin/gus"
+    "light": "bin/light"
   },
   "scripts": {
     "dev": "tsc -w",

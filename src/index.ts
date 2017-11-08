@@ -1,76 +1,58 @@
-// typesrcipr library src index.
-
 import * as chalk from 'chalk';
-import * as commander from 'commander';
-import { Answers, prompt, Question } from 'inquirer';
+import * as cmd from 'commander';
 import * as process from 'process';
 
-import { init, start } from './command';
+import { init, start } from './commands';
 import { getVersion, log } from './utils';
 
-const InitData = {
-    types: [
-        'component',
-        'app',
-        'project'
-    ]
-};
+cmd.version(getVersion());
 
-commander.version(getVersion());
+// dev
 
-commander.command('link:list <a> <b>')
-    .alias('l')
-    .action((name, options) => {
-        log('name & options: ', name, options);
-    });
 
-commander.command('init')
-    .description('init a project, which should be [lib | koa | express].')
-    .option('-s, --setup_mode [mode]', 'Which setup mode to use')
-    .action((name: string, options: any) => {
-        prompt([{
-            type: 'list',
-            name: 'initType',
-            message: 'Select a type to init:',
-            default: 0,
-            choices: InitData.types
-        }]).then(typeAnwser => {
-            const initType = typeAnwser['initType'] || '';
+// init
+cmd.command('init [type] [name]')
+  .description('init a project, which should be [lib | koa | express].')
+  .option('-s, --setup_mode [mode]', 'Which setup mode to use')
+  .action((type: string, name: string, options: any) => {
+    console.log('type & name & options in Init: ', type, name);
 
-            if (!initType || InitData.types.indexOf(initType) < 0) {
-                return log.error(`init type can't be null!`);
-            }
+    init(type, name, options);
+  });
 
-            prompt([{
-                type: 'input',
-                name: 'initName',
-                message: `Input ${ initType === 'app' ? 'an' : 'a' } ${ initType } name to init:`,
-                default: `gus-${ initType }`
-            }]).then(nameAnwser => {
-                const initName = nameAnwser['initName'] || '';
 
-                if (!initName) {
-                    return log.error(`init name can't be null! \n`);
-                }
+// list
 
-                init(initType, initName);
-            });
-        });
-        // init(name);
-    });
 
-commander.command('start <name>')
-    .description('start a gus-fe project.')
-    .option('-d, --dev', 'setup development environment')
-    .action((name: string, options: any) => {
-        start(name);
-    });
+// start
+cmd.command('start [name]')
+  .description('start a gus-fe project.')
+  .option('-d, --dev', 'setup development environment')
+  .action((name: string, options: any) => {
+    console.log('name & options in start: ', name, options);
+    start(name);
+  });
 
-commander.command('test <dir> [otherDirs...]')
-    .action((dir, otherDirs) => {
-        log('rmdir %s', dir);
-    });
+// stop
 
-commander.parse(process.argv);
+
+// tests
+cmd.command('test <dir> [otherDirs...]')
+  .action((dir, otherDirs) => {
+    log('rmdir %s', dir);
+  });
+
+cmd.command('*')
+  .action((...args) => {
+    args.pop();
+    log.error(`  Error: ommand not found: ${ args.join(' ') }`);
+    cmd.outputHelp();
+  });
+
+cmd.parse(process.argv);
+
+if (!cmd.args.length) {
+  cmd.outputHelp();
+}
 
 export const GusCli = {};

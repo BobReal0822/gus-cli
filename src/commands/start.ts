@@ -1,6 +1,5 @@
 import { IAppOptions, Server } from './../lib/server/app';
 
-
 export function start(name: string) {
     // return '';
     const options: IAppOptions = {
