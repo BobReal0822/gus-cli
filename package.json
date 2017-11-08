@@ -1,18 +1,18 @@
 {
-  "name": "light",
+  "name": "gus-cli",
   "version": "1.0.0",
   "description": "",
   "main": "build/index.js",
   "typings": "build/index.d.ts",
   "bin": {
-    "light": "bin/light"
+    "gus": "bin/gus"
   },
   "scripts": {
     "dev": "tsc -w",
     "build": "tsc",
     "test": "mocha"
   },
-  "author": "",
+  "author": "ephoton",
   "license": "MIT",
   "dependencies": {
     "@types/chalk": "^0.4.31",
