@@ -1,20 +1,11 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const Path = require("path");
-const Koa = require("koa");
-const Router = require("koa-router");
-const Static = require("koa-static");
+const Fs = require("fs-extra");
+const child_process_1 = require("child_process");
 const Moment = require("moment");
 const utils_1 = require("./../../utils");
-// import * as ReactView from 'koa-react-view';
+const config_1 = require("./../../config");
 // tslint:disable-next-line
 const ReactView = require('koa-react-view');
 // tslint:disable-next-line
@@ -40,15 +31,11 @@ const DefaultAppOptions = {
         'dist',
         'node_modules'
     ],
-    viewPath: './view'
+    viewPath: './build/lib/server/view'
 };
 const DefaultAppInstance = {
-    instance: new Koa(),
-    config: {
-        port: 3000,
-        staticPaths: ['dist'],
-        viewPath: './view'
-    },
+    script: '',
+    config: DefaultAppOptions,
     status: AppStatus.offline,
     type: exports.ProjectTypes.project,
     desc: '',
@@ -56,22 +43,23 @@ const DefaultAppInstance = {
     updated_at: undefined,
     deleted_at: undefined
 };
-class Server {
+class App {
     constructor(options) {
         console.log('init');
         this.config = Object.assign({}, DefaultServerConfig, options);
     }
-    static startApp(name) {
-        // TODO: is port available
+    static start(name) {
         const app = this.apps[name];
-        utils_1.log(`start app: ${name} now in port ${app.config.port}: \n ${JSON.stringify(app)}`);
+        utils_1.log(`start app: ${name} now in port ${app.config.port}`);
         if (!name || !app) {
             utils_1.log(`app: ${name} not exist!`);
             return false;
         }
         try {
-            console.log('app config: ', JSON.stringify(app), JSON.stringify(app.config));
-            app.instance.listen(app.config.port);
+            console.log('should start app ', app.script);
+            if (app.script) {
+                child_process_1.exec(`pm2 start ${app.script}`);
+            }
         }
         catch (err) {
             utils_1.log(`start app:${name} error!`);
@@ -82,6 +70,9 @@ class Server {
     static stopApp(name) {
         //
     }
+    static list(name) {
+        //
+    }
     static deleteApp(name) {
         const app = this.apps[name];
         if (!name || !app) {
@@ -90,68 +81,18 @@ class Server {
         this.stopApp(name);
         return true;
     }
-    static initApp(name, options, desc) {
-        const instance = new Koa();
-        const router = new Router();
+    static init(name, options, desc) {
         const projectType = exports.ProjectTypes[utils_1.getProjectType(Path.resolve('./'))] || '';
         let app;
-        utils_1.log('name & options before assign: ', name, options);
-        options = Object.assign({}, DefaultAppOptions, {
-            port: options.port
-        });
-        utils_1.log('init app options: ', options, projectType);
-        utils_1.log('view path: ', Path.resolve(__dirname, options.viewPath));
-        ReactView(instance, {
-            extname: 'js',
-            views: Path.resolve(__dirname, options.viewPath)
-            // internals: true
-        });
-        register({
-            presets: ['es2015', 'react'],
-            extensions: ['.js']
-        });
-        (options.staticPaths || []).map(path => {
-            instance.use(Static(Path.resolve(path)));
-            instance.use(Static(Path.resolve(path, name)));
-        });
-        instance.use((ctx, next) => __awaiter(this, void 0, void 0, function* () {
-            const start = new Date();
-            yield next();
-            const ms = new Date() - start;
-            ctx.set('X-Response-Time', `${ms}ms`);
-        }));
-        process.env.browser = 'app-server';
-        router.get('*', (ctx, next) => __awaiter(this, void 0, void 0, function* () {
-            const url = ctx.url || '/';
-            yield next();
-            // ctx.set({
-            //     'Access-Control-Allow-Origin': '*',
-            //     'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-            //     'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token'
-            // });
-            ctx.state = {
-                app: {
-                    name,
-                    type: projectType
-                },
-                viewEngine: 'React',
-                location: url,
-                context: ctx,
-                data: {
-                    userId: 'b-111',
-                    name: 'hahaha',
-                    location: url
-                }
-            };
-            return ctx.render('index');
-        }));
-        instance.use(router.routes());
-        instance.use(router.allowedMethods());
-        instance.on('error', (err, ctx) => {
-            utils_1.log.error(`server error: ${err}`);
+        const script = Path.resolve(config_1.AppConfig.appPath, `${name}.js`);
+        options = Object.assign({}, DefaultAppOptions, options);
+        Fs.ensureDirSync(config_1.AppConfig.appPath);
+        Fs.writeFileSync(script, utils_1.generateApp(name, projectType, options), {
+            encoding: 'utf-8'
         });
         app = Object.assign({}, DefaultAppInstance, {
-            instance,
+            name,
+            script,
             type: projectType,
             desc: desc || '',
             config: options,
@@ -160,6 +101,6 @@ class Server {
         this.apps[name] = app;
     }
 }
-Server.apps = {};
-exports.Server = Server;
+App.apps = {};
+exports.App = App;
 //# sourceMappingURL=app.js.map

@@ -1,10 +1,6 @@
-/// <reference types="koa" />
-/// <reference types="koa-router" />
-/// <reference types="koa-views" />
 /// <reference types="moment" />
-import * as Koa from 'koa';
 import * as Moment from 'moment';
-export interface IAppOptions {
+export interface AppOptions {
     port: number;
     staticPaths?: string[];
     viewPath?: string;
@@ -18,9 +14,9 @@ export declare enum AppStatus {
 export declare const ProjectTypes: {
     [key: string]: string;
 };
-export interface IAppInstance {
-    instance: Koa;
-    config: IAppOptions;
+export interface AppInstance {
+    script: string;
+    config: AppOptions;
     status: AppStatus;
     type: string;
     desc: string;
@@ -28,16 +24,17 @@ export interface IAppInstance {
     updated_at: Moment.Moment | undefined;
     deleted_at: Moment.Moment | undefined;
 }
-export interface IServerOptions {
+export interface ServerOptions {
 }
-export declare class Server {
+export declare class App {
     private config;
     static apps: {
-        [key: string]: IAppInstance;
+        [key: string]: AppInstance;
     };
-    constructor(options: IServerOptions);
-    static startApp(name: string): boolean;
+    constructor(options: ServerOptions);
+    static start(name: string): boolean;
     static stopApp(name: string): void;
+    static list(name: string): void;
     static deleteApp(name: string): boolean;
-    static initApp(name: string, options: IAppOptions, desc?: string): void;
+    static init(name: string, options: AppOptions, desc?: string): void;
 }

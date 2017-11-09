@@ -24,4 +24,5 @@ init
 start
 list
 stop
+clean
 dev

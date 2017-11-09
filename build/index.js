@@ -21,7 +21,6 @@ cmd.command('start [name]')
     .description('start a gus-fe project.')
     .option('-d, --dev', 'setup development environment')
     .action((name, options) => {
-    console.log('name & options in start: ', name, options);
     commands_1.start(name);
 });
 // stop
