@@ -15,15 +15,18 @@ cmd.command('init [type] [name]')
     console.log('type & name & options in Init: ', type, name);
     commands_1.init(type, name, options);
 });
-// list
 // start
 cmd.command('start [name]')
-    .description('start a gus-fe project.')
-    .option('-d, --dev', 'setup development environment')
+    .description('start an app.')
     .action((name, options) => {
     commands_1.start(name);
 });
 // stop
+cmd.command('stop [name]')
+    .description('stop an app.')
+    .action((name, options) => {
+    commands_1.stop(name);
+});
 // tests
 cmd.command('test <dir> [otherDirs...]')
     .action((dir, otherDirs) => {

@@ -1,1 +1,1 @@
-export declare function stop(): void;
+export declare function stop(name: string): any;

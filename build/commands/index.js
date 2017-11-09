@@ -5,7 +5,6 @@ function __export(m) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./dev"));
 __export(require("./init"));
-__export(require("./list"));
 // export * from './server';
 __export(require("./start"));
 __export(require("./stop"));

@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const chalk_1 = require("chalk");
 const Fs = require("fs");
 const Path = require("path");
+const child_process_1 = require("child_process");
+const Process = require("process");
 const packagePath = Path.join(__dirname, './../..', 'package.json');
 /**
  * Get package version.
@@ -26,4 +28,16 @@ function getProjectType(path) {
     return packageInfo && packageInfo.type || '';
 }
 exports.getProjectType = getProjectType;
+function exeCmd(cmd) {
+    const exe = child_process_1.exec(cmd);
+    exe.stdout.pipe(Process.stdout);
+    exe.stderr.pipe(Process.stderr);
+    exe.on('error', err => {
+        throw new Error(`in exeCmd: ${err}`);
+    });
+    exe.on('exit', code => {
+        exports.log.error('child process exited with code ' + code.toString());
+    });
+}
+exports.exeCmd = exeCmd;
 //# sourceMappingURL=common.js.map

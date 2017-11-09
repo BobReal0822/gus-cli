@@ -1,6 +1,5 @@
 import * as Path from 'path';
 import * as Fs from 'fs-extra';
-import { exec } from 'child_process';
 
 import * as Koa from 'koa';
 import * as Static from 'koa-static';
@@ -8,7 +7,7 @@ import * as Views from 'koa-views';
 import * as Moment from 'moment';
 import * as _ from 'lodash';
 
-import { getProjectType, log, generateApp } from './../../utils';
+import { getProjectType, log, generateApp, exeCmd } from './../../utils';
 import { AppConfig } from './../../config';
 
 // tslint:disable-next-line
@@ -103,7 +102,7 @@ export class App {
     try {
       console.log('should start app ', app.script);
       if (app.script) {
-        exec(`pm2 start ${ app.script }`);
+        exeCmd(`pm2 start ${ app.script }`);
       }
     } catch (err) {
       log(`start app:${ name } error!`);

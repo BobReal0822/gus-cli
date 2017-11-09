@@ -3,9 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  *
  */
-const child_process_1 = require("child_process");
 const Path = require("path");
-const Process = require("process");
 const inquirer_1 = require("inquirer");
 const chalk_1 = require("chalk");
 const utils_1 = require("./../utils");
@@ -89,7 +87,6 @@ function selectName(type) {
 function generate(type, name, options) {
     const command = exports.InitTypeMapping[type];
     const projectType = utils_1.getProjectType(Path.resolve(__dirname, './../..'));
-    let exe;
     utils_1.log('_____this project type: ', projectType);
     if (!type || !command) {
         return utils_1.log.error('command not found!');
@@ -99,11 +96,6 @@ function generate(type, name, options) {
         run gus init ${chalk_1.default.yellow(type)} now:
         begin ${chalk_1.default.yellow(command.value)}${command.desc && chalk_1.default.gray(`(${command.desc})`)}
     `);
-    exe = child_process_1.exec(projectType === 'gus-project' && type === 'app' ? 'yo gus-project-app' : command.value);
-    exe.stdout.pipe(Process.stdout);
-    exe.stderr.pipe(Process.stderr);
-    exe.on('exit', code => {
-        utils_1.log.error('child process exited with code ' + code.toString());
-    });
+    utils_1.exeCmd(projectType === 'gus-project' && type === 'app' ? 'yo gus-project-app' : command.value);
 }
 //# sourceMappingURL=init.js.map

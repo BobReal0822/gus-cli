@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const Path = require("path");
 const Fs = require("fs-extra");
-const child_process_1 = require("child_process");
 const Moment = require("moment");
 const utils_1 = require("./../../utils");
 const config_1 = require("./../../config");
@@ -58,7 +57,7 @@ class App {
         try {
             console.log('should start app ', app.script);
             if (app.script) {
-                child_process_1.exec(`pm2 start ${app.script}`);
+                utils_1.exeCmd(`pm2 start ${app.script}`);
             }
         }
         catch (err) {

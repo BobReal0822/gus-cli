@@ -1,13 +1,12 @@
 /**
  *
  */
-import { ChildProcess, exec } from 'child_process';
 import * as Path from 'path';
 import * as Process from 'process';
 import { Answers, prompt, Question } from 'inquirer';
 import { default as chalk } from 'chalk';
 
-import { getProjectType, log } from './../utils';
+import { getProjectType, log, exeCmd } from './../utils';
 
 export interface InitOptionsInterface {
 
@@ -108,7 +107,6 @@ function selectName(type: string) {
 function generate(type: string, name: string, options?: InitOptionsInterface) {
     const command = InitTypeMapping[type];
     const projectType = getProjectType(Path.resolve(__dirname, './../..'));
-    let exe: ChildProcess;
 
     log('_____this project type: ', projectType);
 
@@ -122,10 +120,5 @@ function generate(type: string, name: string, options?: InitOptionsInterface) {
         begin ${ chalk.yellow(command.value) }${ command.desc && chalk.gray(`(${ command.desc })`) }
     `);
 
-    exe = exec(projectType === 'gus-project' && type === 'app' ? 'yo gus-project-app' : command.value);
-    exe.stdout.pipe(Process.stdout);
-    exe.stderr.pipe(Process.stderr);
-    exe.on('exit', code => {
-        log.error('child process exited with code ' + code.toString());
-    });
+    exeCmd(projectType === 'gus-project' && type === 'app' ? 'yo gus-project-app' : command.value);
 }

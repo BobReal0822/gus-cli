@@ -4,7 +4,7 @@ import * as chalk from 'chalk';
 import * as cmd from 'commander';
 import * as process from 'process';
 
-import { init, start } from './commands';
+import { init, start, stop } from './commands';
 import { getVersion, log } from './utils';
 
 cmd.version(getVersion());
@@ -22,20 +22,19 @@ cmd.command('init [type] [name]')
     init(type, name, options);
   });
 
-
-// list
-
-
 // start
 cmd.command('start [name]')
-  .description('start a gus-fe project.')
-  .option('-d, --dev', 'setup development environment')
+  .description('start an app.')
   .action((name: string, options: any) => {
     start(name);
   });
 
 // stop
-
+cmd.command('stop [name]')
+  .description('stop an app.')
+  .action((name: string, options: any) => {
+    stop(name);
+  });
 
 // tests
 cmd.command('test <dir> [otherDirs...]')
