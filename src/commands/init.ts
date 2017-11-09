@@ -13,10 +13,10 @@ export interface InitOptionsInterface {
 }
 
 export interface InitNameInterface {
-    [key: string]: {
-        value: string;
-        desc: string;
-    };
+  [key: string]: {
+    value: string;
+    desc: string;
+  };
 }
 
 export const  DefaultInitOptions: InitOptionsInterface = {
@@ -24,26 +24,26 @@ export const  DefaultInitOptions: InitOptionsInterface = {
 };
 
 export const InitTypeMapping: InitNameInterface = {
-    component: {
-        value: 'yo gus-component',
-        desc: ''
-    },
-    app: {
-        value: 'yo gus-app --color',
-        desc: ''
-    },
-    project: {
-        value: 'yo gus-project',
-        desc: ''
-    },
-    server: {
-        value: 'yo gus-server',
-        desc: ''
-    },
-    lib: {
-        value: 'yo ts-lib',
-        desc: ''
-    }
+  component: {
+    value: 'yo gus-component',
+    desc: ''
+  },
+  app: {
+    value: 'yo gus-app --color',
+    desc: ''
+  },
+  project: {
+    value: 'yo gus-project',
+    desc: ''
+  },
+  server: {
+    value: 'yo gus-server',
+    desc: ''
+  },
+  lib: {
+    value: 'yo ts-lib',
+    desc: ''
+  }
 };
 const InitData = {
   types: [
@@ -105,20 +105,22 @@ function selectName(type: string) {
 }
 
 function generate(type: string, name: string, options?: InitOptionsInterface) {
-    const command = InitTypeMapping[type];
-    const projectType = getProjectType(Path.resolve(__dirname, './../..'));
+  const command = InitTypeMapping[type];
+  const projectType = getProjectType(Path.resolve(__dirname, './../..'));
 
-    log('_____this project type: ', projectType);
+  log('_____this project type: ', projectType);
 
-    if (!type || !command) {
-        return log.error('command not found!');
-    }
+  if (!type || !command) {
+      return log.error('command not found!');
+  }
 
-    log('chalk enable: ', chalk.enabled);
-    log(`
-        run gus init ${ chalk.yellow(type) } now:
-        begin ${ chalk.yellow(command.value) }${ command.desc && chalk.gray(`(${ command.desc })`) }
-    `);
+  log('chalk enable: ', chalk.enabled);
+  log(`
+      run gus init ${ chalk.yellow(type) } now:
+      begin ${ chalk.yellow(command.value) }${ command.desc && chalk.gray(`(${ command.desc })`) }
+  `);
 
-    exeCmd(projectType === 'gus-project' && type === 'app' ? 'yo gus-project-app' : command.value);
+  exeCmd([
+    projectType === 'gus-project' && type === 'app' ? 'yo gus-project-app' : command.value
+  ]);
 }

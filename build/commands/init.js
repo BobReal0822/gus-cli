@@ -93,9 +93,11 @@ function generate(type, name, options) {
     }
     utils_1.log('chalk enable: ', chalk_1.default.enabled);
     utils_1.log(`
-        run gus init ${chalk_1.default.yellow(type)} now:
-        begin ${chalk_1.default.yellow(command.value)}${command.desc && chalk_1.default.gray(`(${command.desc})`)}
-    `);
-    utils_1.exeCmd(projectType === 'gus-project' && type === 'app' ? 'yo gus-project-app' : command.value);
+      run gus init ${chalk_1.default.yellow(type)} now:
+      begin ${chalk_1.default.yellow(command.value)}${command.desc && chalk_1.default.gray(`(${command.desc})`)}
+  `);
+    utils_1.exeCmd([
+        projectType === 'gus-project' && type === 'app' ? 'yo gus-project-app' : command.value
+    ]);
 }
 //# sourceMappingURL=init.js.map

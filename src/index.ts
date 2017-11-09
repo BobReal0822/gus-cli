@@ -4,13 +4,28 @@ import * as chalk from 'chalk';
 import * as cmd from 'commander';
 import * as process from 'process';
 
-import { init, start, stop } from './commands';
+import { init, start, stop, dev, build } from './commands';
 import { getVersion, log } from './utils';
+
+process.stdin.setMaxListeners(100);
+process.stdout.setMaxListeners(100);
+process.stderr.setMaxListeners(100);
 
 cmd.version(getVersion());
 
-// dev
+// build
+cmd.command('build [name]')
+.description('build an app.')
+.action((name: string, options: any) => {
+  build(name);
+});
 
+// dev
+cmd.command('dev [name]')
+.description('build and watch an app in development mode.')
+.action((name: string, options: any) => {
+  dev(name);
+});
 
 // init
 cmd.command('init [type] [name]')

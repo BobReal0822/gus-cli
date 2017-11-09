@@ -26,7 +26,7 @@ exports.ProjectTypes = {
 const DefaultServerConfig = {};
 const DefaultAppOptions = {
     port: 3000,
-    staticPaths: [
+    static: [
         'dist',
         'node_modules'
     ],
@@ -44,7 +44,6 @@ const DefaultAppInstance = {
 };
 class App {
     constructor(options) {
-        console.log('init');
         this.config = Object.assign({}, DefaultServerConfig, options);
     }
     static start(name) {
@@ -55,9 +54,8 @@ class App {
             return false;
         }
         try {
-            console.log('should start app ', app.script);
             if (app.script) {
-                utils_1.exeCmd(`pm2 start ${app.script}`);
+                utils_1.exeCmd([`pm2 start ${app.script}`]);
             }
         }
         catch (err) {
@@ -66,19 +64,22 @@ class App {
         }
         return true;
     }
-    static stopApp(name) {
-        //
+    static stop(name) {
+        const script = Path.resolve(config_1.AppConfig.appPath, `${name}.js`);
+        if (!name || !Fs.existsSync(script)) {
+            return utils_1.log.error(`app ${name} does not exist.`);
+        }
+        try {
+            Fs.unlinkSync(script);
+            utils_1.exeCmd([`pm2 stop ${name}`]);
+            utils_1.log(`stop ${name} successfully.`);
+        }
+        catch (err) {
+            throw new Error(`stop ${name} failed: ${err}`);
+        }
     }
     static list(name) {
-        //
-    }
-    static deleteApp(name) {
-        const app = this.apps[name];
-        if (!name || !app) {
-            return false;
-        }
-        this.stopApp(name);
-        return true;
+        return this.list;
     }
     static init(name, options, desc) {
         const projectType = exports.ProjectTypes[utils_1.getProjectType(Path.resolve('./'))] || '';

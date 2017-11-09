@@ -7,7 +7,7 @@ import * as Views from 'koa-views';
 import * as Moment from 'moment';
 import * as _ from 'lodash';
 
-import { getProjectType, log, generateApp, exeCmd } from './../../utils';
+import { getProjectType, log, generateApp, exeCmd, getConfig } from './../../utils';
 import { AppConfig } from './../../config';
 
 // tslint:disable-next-line
@@ -15,11 +15,9 @@ const ReactView = require('koa-react-view');
 // tslint:disable-next-line
 const register = require('babel-register');
 
-// import { Server } from './../config';
-
 export interface AppOptions {
   port: number;
-  staticPaths?: string[];
+  static?: string[];
   viewPath?: string;
   desc?: string;
 }
@@ -60,7 +58,7 @@ const DefaultServerConfig: ServerOptions = {
 
 const DefaultAppOptions: AppOptions = {
   port: 3000,
-  staticPaths: [
+  static: [
     'dist',
     'node_modules'
   ],
@@ -85,8 +83,7 @@ export class App {
   } = {};
 
   constructor(options: ServerOptions) {
-    console.log('init');
-    this.config = Object.assign({}, DefaultServerConfig, options);
+    this.config = Object.assign({}, DefaultServerConfig,  options);
   }
 
   static start(name: string) {
@@ -100,9 +97,8 @@ export class App {
     }
 
     try {
-      console.log('should start app ', app.script);
       if (app.script) {
-        exeCmd(`pm2 start ${ app.script }`);
+        exeCmd([`pm2 start ${ app.script }`]);
       }
     } catch (err) {
       log(`start app:${ name } error!`);
@@ -113,24 +109,25 @@ export class App {
     return true;
   }
 
-  static stopApp(name: string) {
-    //
+  static stop(name: string) {
+    const script = Path.resolve(AppConfig.appPath, `${ name }.js`);
+
+    if (!name || !Fs.existsSync(script)) {
+        return log.error(`app ${ name } does not exist.`);
+      }
+
+    try {
+        Fs.unlinkSync(script);
+        exeCmd([`pm2 stop ${ name }`]);
+
+        log(`stop ${ name } successfully.`);
+      } catch (err) {
+        throw new Error(`stop ${ name } failed: ${ err }`);
+      }
   }
 
   static list(name: string) {
-    //
-  }
-
-  static deleteApp(name: string): boolean {
-    const app = this.apps[name];
-
-    if (!name || !app) {
-      return false;
-    }
-
-    this.stopApp(name);
-
-    return true;
+    return this.list;
   }
 
   static init(name: string, options: AppOptions, desc?: string) {

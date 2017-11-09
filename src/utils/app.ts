@@ -14,7 +14,7 @@ export function generateApp(name: string, type: string, options: AppOptions) {
 
     ReactView(app, {
       extname: 'js',
-      views: Path.resolve(__dirname, './../../', ${ options.viewPath })
+      views: Path.resolve(__dirname, './../../', '${ options.viewPath }')
     });
 
     register({
@@ -22,7 +22,7 @@ export function generateApp(name: string, type: string, options: AppOptions) {
       extensions: [ '.js' ]
     });
 
-    [${ (options.staticPaths || []).map(item => `'${ item }'`) }].map(path => {
+    [${ (options.static || []).map(item => `'${ item }'`) }].map(path => {
       if (path) {
         app.use(Static(Path.resolve(path)));
         app.use(Static(Path.resolve(path, '${ name }')));

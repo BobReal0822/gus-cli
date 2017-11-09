@@ -4,11 +4,26 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const chalk_1 = require("chalk");
-const Fs = require("fs");
+const Fs = require("fs-extra");
 const Path = require("path");
 const child_process_1 = require("child_process");
 const Process = require("process");
+const Chokidar = require("chokidar");
+const _ = require("lodash");
 const packagePath = Path.join(__dirname, './../..', 'package.json');
+const DefaultAppConfig = {
+    server: {
+        port: 3333,
+        static: [
+            'dist',
+            'node_modules'
+        ]
+    },
+    style: {
+        path: './style',
+        items: {}
+    }
+};
 /**
  * Get package version.
  *
@@ -28,16 +43,52 @@ function getProjectType(path) {
     return packageInfo && packageInfo.type || '';
 }
 exports.getProjectType = getProjectType;
-function exeCmd(cmd) {
-    const exe = child_process_1.exec(cmd);
-    exe.stdout.pipe(Process.stdout);
-    exe.stderr.pipe(Process.stderr);
-    exe.on('error', err => {
-        throw new Error(`in exeCmd: ${err}`);
-    });
-    exe.on('exit', code => {
-        exports.log.error('child process exited with code ' + code.toString());
+function exeCmd(cmds, noOut) {
+    cmds.map(cmd => {
+        const exe = child_process_1.exec(cmd);
+        if (!noOut) {
+            exe.stdout.pipe(Process.stdout);
+            exe.on('exit', code => {
+                exports.log.warning(`child process exited with code ${code.toString()}`);
+            });
+        }
+        exe.stderr.pipe(Process.stderr);
+        exe.on('error', err => {
+            throw new Error(`${cmd}: ${err}`);
+        });
     });
 }
 exports.exeCmd = exeCmd;
+function getConfig(name) {
+    const path = Path.resolve(name, 'config.json');
+    if (!name) {
+        return DefaultAppConfig;
+    }
+    const config = JSON.parse(Fs.readFileSync(path).toString());
+    return Object.assign({}, _.cloneDeep(DefaultAppConfig), config);
+}
+exports.getConfig = getConfig;
+function buildStyle(dir, styles, watch) {
+    const exes = [];
+    styles.map(style => {
+        if (style && style.dist && style.source) {
+            Fs.ensureFile(style.source);
+            exes.push(`lessc ${style.source} > ${style.dist}`);
+            if (!watch) {
+                exports.log(chalk_1.default.yellow(`style built: ${Path.relative(dir, style.source)}`));
+            }
+        }
+    });
+    if (watch) {
+        const watcher = Chokidar.watch(dir).on('all', (event, path) => {
+            exports.log(chalk_1.default.yellow('watching style: '), chalk_1.default.gray(event), Path.relative(dir, path));
+            exeCmd(exes, true);
+        });
+        watcher.on('error', error => exports.log.err(`Watcher error: ${error}`));
+    }
+    else {
+        exeCmd(exes, true);
+    }
+}
+exports.buildStyle = buildStyle;
 //# sourceMappingURL=common.js.map

@@ -2,7 +2,7 @@
 import * as Moment from 'moment';
 export interface AppOptions {
     port: number;
-    staticPaths?: string[];
+    static?: string[];
     viewPath?: string;
     desc?: string;
 }
@@ -33,8 +33,7 @@ export declare class App {
     };
     constructor(options: ServerOptions);
     static start(name: string): boolean;
-    static stopApp(name: string): void;
-    static list(name: string): void;
-    static deleteApp(name: string): boolean;
+    static stop(name: string): any;
+    static list(name: string): typeof App.list;
     static init(name: string, options: AppOptions, desc?: string): void;
 }

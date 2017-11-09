@@ -3,12 +3,44 @@
  */
 
 import { default as chalk } from 'chalk';
-import * as Fs from 'fs';
+import * as Fs from 'fs-extra';
 import * as Path from 'path';
 import { exec } from 'child_process';
 import * as Process from 'process';
+import * as Chokidar from 'chokidar';
+import * as Less from 'less';
+import { EventEmitter } from 'events';
+
+import * as _ from 'lodash';
 
 const packagePath = Path.join(__dirname, './../..', 'package.json');
+
+export interface AppConfigInfo {
+  server: {
+    port: number;
+    static: string[];
+  };
+  style: {
+    path: string;
+    items: {
+      [key: string]: string;
+    }
+  };
+}
+
+const DefaultAppConfig: AppConfigInfo = {
+  server: {
+    port: 3333,
+    static: [
+      'dist',
+      'node_modules'
+    ]
+  },
+  style: {
+    path: './style',
+    items: {}
+  }
+};
 
 /**
  * Get package version.
@@ -32,15 +64,57 @@ export function getProjectType(path: string): string {
   return packageInfo && packageInfo.type || '';
 }
 
-export function exeCmd(cmd: string) {
-  const exe = exec(cmd);
+export function exeCmd(cmds: string[], noOut?: boolean) {
 
-  exe.stdout.pipe(Process.stdout);
-  exe.stderr.pipe(Process.stderr);
-  exe.on('error', err => {
-    throw new Error(`in exeCmd: ${ err }`);
+  cmds.map(cmd => {
+    const exe = exec(cmd);
+
+    if (!noOut) {
+      exe.stdout.pipe(Process.stdout);
+      exe.on('exit', code => {
+        log.warning(`child process exited with code ${ code.toString() }`);
+      });
+    }
+    exe.stderr.pipe(Process.stderr);
+    exe.on('error', err => {
+      throw new Error(`${ cmd }: ${ err }`);
+    });
   });
-  exe.on('exit', code => {
-    log.error('child process exited with code ' + code.toString());
+}
+
+export function getConfig(name: string): AppConfigInfo {
+  const path = Path.resolve(name, 'config.json');
+
+  if (!name) {
+    return DefaultAppConfig;
+  }
+
+  const config = JSON.parse(Fs.readFileSync(path).toString());
+
+  return Object.assign({}, _.cloneDeep(DefaultAppConfig), config);
+}
+
+export function buildStyle(dir: string, styles: { source: string; dist: string }[], watch?: boolean) {
+  const exes: string[] = [];
+  styles.map(style => {
+    if (style && style.dist && style.source) {
+      Fs.ensureFile(style.source);
+      exes.push(`lessc ${ style.source } > ${ style.dist }`);
+
+      if (!watch) {
+        log(chalk.yellow(`style built: ${ Path.relative(dir, style.source) }`));
+      }
+    }
   });
+
+  if (watch) {
+    const watcher = Chokidar.watch(dir).on('all', (event, path) => {
+      log(chalk.yellow('watching style: '), chalk.gray(event), Path.relative(dir, path));
+      exeCmd(exes, true);
+    });
+
+    watcher.on('error', error => log.err(`Watcher error: ${ error }`));
+  } else {
+    exeCmd(exes, true);
+  }
 }

@@ -5,8 +5,22 @@ const cmd = require("commander");
 const process = require("process");
 const commands_1 = require("./commands");
 const utils_1 = require("./utils");
+process.stdin.setMaxListeners(100);
+process.stdout.setMaxListeners(100);
+process.stderr.setMaxListeners(100);
 cmd.version(utils_1.getVersion());
+// build
+cmd.command('build [name]')
+    .description('build an app.')
+    .action((name, options) => {
+    commands_1.build(name);
+});
 // dev
+cmd.command('dev [name]')
+    .description('build and watch an app in development mode.')
+    .action((name, options) => {
+    commands_1.dev(name);
+});
 // init
 cmd.command('init [type] [name]')
     .description('init a project, which should be [lib | koa | express].')
