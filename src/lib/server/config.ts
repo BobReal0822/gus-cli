@@ -2,8 +2,8 @@
  *
  */
 export const view = {
-    path: {
-        layout: './index',
-        home: './page'
-    }
+  path: {
+    layout: './index',
+    home: './page'
+  }
 };

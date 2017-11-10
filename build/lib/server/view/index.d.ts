@@ -1,4 +1,4 @@
-export interface IPropsInfo {
+export interface PropsInfo {
     app: {
         name: string;
         type: string;
@@ -9,6 +9,6 @@ export interface IPropsInfo {
         url?: string;
     } | undefined;
 }
-export interface IStateInfo {
+export interface StateInfo {
     size: string;
 }

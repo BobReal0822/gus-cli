@@ -91,4 +91,10 @@ function buildStyle(dir, styles, watch) {
     }
 }
 exports.buildStyle = buildStyle;
+function setMaxListeners() {
+    process.stdin.setMaxListeners(100);
+    process.stdout.setMaxListeners(100);
+    process.stderr.setMaxListeners(100);
+}
+exports.setMaxListeners = setMaxListeners;
 //# sourceMappingURL=common.js.map

@@ -5,10 +5,6 @@ const Fs = require("fs-extra");
 const Moment = require("moment");
 const utils_1 = require("./../../utils");
 const config_1 = require("./../../config");
-// tslint:disable-next-line
-const ReactView = require('koa-react-view');
-// tslint:disable-next-line
-const register = require('babel-register');
 var AppStatus;
 (function (AppStatus) {
     AppStatus[AppStatus["offline"] = 1] = "offline";

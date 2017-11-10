@@ -108,13 +108,10 @@ function generate(type: string, name: string, options?: InitOptionsInterface) {
   const command = InitTypeMapping[type];
   const projectType = getProjectType(Path.resolve(__dirname, './../..'));
 
-  log('_____this project type: ', projectType);
-
   if (!type || !command) {
       return log.error('command not found!');
   }
 
-  log('chalk enable: ', chalk.enabled);
   log(`
       run gus init ${ chalk.yellow(type) } now:
       begin ${ chalk.yellow(command.value) }${ command.desc && chalk.gray(`(${ command.desc })`) }

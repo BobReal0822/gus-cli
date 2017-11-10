@@ -1,7 +1,4 @@
 
-/**
- *
- */
 import * as Path from 'path';
 
 import * as escapeHtml from 'escape-html';
@@ -13,68 +10,67 @@ import { StaticRouter } from 'react-router';
 import { ProjectTypes } from './../app';
 import { view } from './../config';
 
-export interface IPropsInfo {
-    app: {
-        name: string;
-        type: string;
+export interface PropsInfo {
+  app: {
+    name: string;
+    type: string;
+  };
+  data: any;
+  location: string;
+  context: {
+    url?: string;
+  } | undefined;
+}
+
+export interface StateInfo {
+  size: string;
+}
+
+class Index extends React.Component<PropsInfo, StateInfo> {
+  state: StateInfo;
+  constructor(props: PropsInfo) {
+  super(props);
+
+  this.state = {
+      size: 'test-size'
     };
-    data: any;
-    location: string;
-    context: {
-        url?: string;
-    } | undefined;
-}
+  }
 
-export interface IStateInfo {
-    size: string;
-}
+  test() {
+    console.log('test click');
+  }
 
-class Index extends React.Component<IPropsInfo, IStateInfo> {
-    state: IStateInfo;
-    constructor(props: IPropsInfo) {
-    super(props);
+  render() {
+    const { app, data, location, context } = this.props;
+    const appPath = (app.type === ProjectTypes.project) ? app.name : '';
 
-    this.state = {
-            size: 'test-size'
-        };
-    }
+    // tslint:disable-next-line
+    const Layout = require(Path.resolve('dist', appPath, view.path.layout));
+    // tslint:disable-next-line
+    const Home = require(Path.resolve('dist', appPath, view.path.home));
 
-    test() {
-        console.log('test click');
-    }
+    // console.log(`path in view:
+    //     layout: ${ Path.resolve(view.path.layout) }----${ JSON.stringify(Layout) }
+    //     Home: ${ Path.resolve(view.path.home) } ---${ JSON.stringify(Home) }
+    // `);
+    const dataScript = `window.__data__ = '${escapeHtml(JSON.stringify(data))}';`;
+    const contentString = ReactDOMServer.renderToString(
+      <StaticRouter
+        location={ location }
+        context={ context }
+      >
+        <Home data={ data } />
+      </StaticRouter>);
 
-    render() {
-        const { app, data, location, context } = this.props;
-        const appPath = (app.type === ProjectTypes.project) ? app.name : '';
-
-        console.log('app in view:', app.type, JSON.stringify(app));
-        // tslint:disable-next-line
-        const Layout = require(Path.resolve('dist', appPath, view.path.layout));
-        // tslint:disable-next-line
-        const Home = require(Path.resolve('dist', appPath, view.path.home));
-
-        console.log(`path in view:
-            layout: ${ Path.resolve(view.path.layout) }----${ JSON.stringify(Layout) }
-            Home: ${ Path.resolve(view.path.home) } ---${ JSON.stringify(Home) }
-        `);
-        const dataScript = `window.__data__ = '${escapeHtml(JSON.stringify(data))}';`;
-        const contentString = ReactDOMServer.renderToString(
-            <StaticRouter
-                location={ location }
-                context={ context }
-            >
-                <Home data={ data } />
-            </StaticRouter>);
-
-        return (
-            <Layout
-                title={ data.title }
-            >
-                <div id='content' dangerouslySetInnerHTML={{__html: contentString}} />
-                <script dangerouslySetInnerHTML={{__html: dataScript}} />
-            </Layout>
-        );
-    }
+    return (
+      <Layout
+        title={ data.title }
+      >
+        <div id='content' dangerouslySetInnerHTML={{__html: contentString}} />
+        <script dangerouslySetInnerHTML={{__html: dataScript}} />
+      </Layout>
+    );
+  }
 }
 
 module.exports = Index;

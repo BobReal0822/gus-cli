@@ -87,11 +87,9 @@ function selectName(type) {
 function generate(type, name, options) {
     const command = exports.InitTypeMapping[type];
     const projectType = utils_1.getProjectType(Path.resolve(__dirname, './../..'));
-    utils_1.log('_____this project type: ', projectType);
     if (!type || !command) {
         return utils_1.log.error('command not found!');
     }
-    utils_1.log('chalk enable: ', chalk_1.default.enabled);
     utils_1.log(`
       run gus init ${chalk_1.default.yellow(type)} now:
       begin ${chalk_1.default.yellow(command.value)}${command.desc && chalk_1.default.gray(`(${command.desc})`)}

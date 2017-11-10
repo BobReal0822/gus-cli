@@ -10,11 +10,6 @@ import * as _ from 'lodash';
 import { getProjectType, log, generateApp, exeCmd, getConfig } from './../../utils';
 import { AppConfig } from './../../config';
 
-// tslint:disable-next-line
-const ReactView = require('koa-react-view');
-// tslint:disable-next-line
-const register = require('babel-register');
-
 export interface AppOptions {
   port: number;
   static?: string[];

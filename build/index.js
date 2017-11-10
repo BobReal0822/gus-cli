@@ -5,46 +5,40 @@ const cmd = require("commander");
 const process = require("process");
 const commands_1 = require("./commands");
 const utils_1 = require("./utils");
-process.stdin.setMaxListeners(100);
-process.stdout.setMaxListeners(100);
-process.stderr.setMaxListeners(100);
+utils_1.setMaxListeners();
 cmd.version(utils_1.getVersion());
 // build
-cmd.command('build [name]')
+cmd.command('build <app>')
     .description('build an app.')
-    .action((name, options) => {
-    commands_1.build(name);
+    .action((app, options) => {
+    commands_1.build(app);
 });
 // dev
-cmd.command('dev [name]')
+cmd.command('dev <app>')
     .description('build and watch an app in development mode.')
-    .action((name, options) => {
-    commands_1.dev(name);
+    .action((app, options) => {
+    commands_1.dev(app);
 });
 // init
-cmd.command('init [type] [name]')
+cmd.command('init [type] [app]')
     .description('init a project, which should be [lib | koa | express].')
     .option('-s, --setup_mode [mode]', 'Which setup mode to use')
-    .action((type, name, options) => {
-    console.log('type & name & options in Init: ', type, name);
+    .action((type, app, options) => {
+    console.log('type & app & options in Init: ', type, app);
     commands_1.init(type, name, options);
 });
 // start
-cmd.command('start [name]')
+cmd.command('start <app>')
     .description('start an app.')
-    .action((name, options) => {
-    commands_1.start(name);
+    .action((app, options) => {
+    console.log('app in start: ', app);
+    commands_1.start(app);
 });
 // stop
-cmd.command('stop [name]')
+cmd.command('stop <app>')
     .description('stop an app.')
-    .action((name, options) => {
-    commands_1.stop(name);
-});
-// tests
-cmd.command('test <dir> [otherDirs...]')
-    .action((dir, otherDirs) => {
-    utils_1.log('rmdir %s', dir);
+    .action((app, options) => {
+    commands_1.stop(app);
 });
 cmd.command('*')
     .action((...args) => {

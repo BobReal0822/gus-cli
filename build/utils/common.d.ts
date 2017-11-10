@@ -25,3 +25,4 @@ export declare function buildStyle(dir: string, styles: {
     source: string;
     dist: string;
 }[], watch?: boolean): void;
+export declare function setMaxListeners(): void;

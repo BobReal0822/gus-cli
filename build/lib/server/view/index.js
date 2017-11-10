@@ -1,8 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- *
- */
 const Path = require("path");
 const escapeHtml = require("escape-html");
 const React = require("react");
@@ -23,15 +20,14 @@ class Index extends React.Component {
     render() {
         const { app, data, location, context } = this.props;
         const appPath = (app.type === app_1.ProjectTypes.project) ? app.name : '';
-        console.log('app in view:', app.type, JSON.stringify(app));
         // tslint:disable-next-line
         const Layout = require(Path.resolve('dist', appPath, config_1.view.path.layout));
         // tslint:disable-next-line
         const Home = require(Path.resolve('dist', appPath, config_1.view.path.home));
-        console.log(`path in view:
-            layout: ${Path.resolve(config_1.view.path.layout)}----${JSON.stringify(Layout)}
-            Home: ${Path.resolve(config_1.view.path.home)} ---${JSON.stringify(Home)}
-        `);
+        // console.log(`path in view:
+        //     layout: ${ Path.resolve(view.path.layout) }----${ JSON.stringify(Layout) }
+        //     Home: ${ Path.resolve(view.path.home) } ---${ JSON.stringify(Home) }
+        // `);
         const dataScript = `window.__data__ = '${escapeHtml(JSON.stringify(data))}';`;
         const contentString = ReactDOMServer.renderToString(React.createElement(react_router_1.StaticRouter, { location: location, context: context },
             React.createElement(Home, { data: data })));

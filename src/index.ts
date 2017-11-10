@@ -5,56 +5,48 @@ import * as cmd from 'commander';
 import * as process from 'process';
 
 import { init, start, stop, dev, build } from './commands';
-import { getVersion, log } from './utils';
+import { getVersion, log, setMaxListeners } from './utils';
 
-process.stdin.setMaxListeners(100);
-process.stdout.setMaxListeners(100);
-process.stderr.setMaxListeners(100);
-
+setMaxListeners();
 cmd.version(getVersion());
 
 // build
-cmd.command('build [name]')
-.description('build an app.')
-.action((name: string, options: any) => {
-  build(name);
-});
+cmd.command('build <app>')
+  .description('build an app.')
+  .action((app: string, options: any) => {
+    build(app);
+  });
 
 // dev
-cmd.command('dev [name]')
-.description('build and watch an app in development mode.')
-.action((name: string, options: any) => {
-  dev(name);
-});
+cmd.command('dev <app>')
+  .description('build and watch an app in development mode.')
+  .action((app: string, options: any) => {
+    dev(app);
+  });
 
 // init
-cmd.command('init [type] [name]')
+cmd.command('init [type] [app]')
   .description('init a project, which should be [lib | koa | express].')
   .option('-s, --setup_mode [mode]', 'Which setup mode to use')
-  .action((type: string, name: string, options: any) => {
-    console.log('type & name & options in Init: ', type, name);
+  .action((type: string, app: string, options: any) => {
+    console.log('type & app & options in Init: ', type, app);
 
     init(type, name, options);
   });
 
 // start
-cmd.command('start [name]')
+cmd.command('start <app>')
   .description('start an app.')
-  .action((name: string, options: any) => {
-    start(name);
+  .action((app: string, options: any) => {
+    console.log('app in start: ', app);
+    start(app);
   });
 
 // stop
-cmd.command('stop [name]')
+cmd.command('stop <app>')
   .description('stop an app.')
-  .action((name: string, options: any) => {
-    stop(name);
-  });
-
-// tests
-cmd.command('test <dir> [otherDirs...]')
-  .action((dir, otherDirs) => {
-    log('rmdir %s', dir);
+  .action((app: string, options: any) => {
+    stop(app);
   });
 
 cmd.command('*')

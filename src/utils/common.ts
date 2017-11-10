@@ -118,3 +118,9 @@ export function buildStyle(dir: string, styles: { source: string; dist: string }
     exeCmd(exes, true);
   }
 }
+
+export function setMaxListeners() {
+  process.stdin.setMaxListeners(100);
+  process.stdout.setMaxListeners(100);
+  process.stderr.setMaxListeners(100);
+}
