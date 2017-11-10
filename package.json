@@ -8,9 +8,12 @@
     "gus": "./build/index.js"
   },
   "scripts": {
-    "dev": "tsc -w",
     "build": "tsc",
-    "test": "mocha"
+    "tsc": "tsc -w",
+    "clean": "rm -rf build",
+    "bare-test": "mocha build/test/index.js",
+    "test": "istanbul cover _mocha build/test",
+    "coveralls": "cat coverage/lcov.info | coveralls"
   },
   "author": "ephoton",
   "license": "MIT",
@@ -65,8 +68,14 @@
     "yeoman-generator": "^2.0.1"
   },
   "devDependencies": {
+    "@types/chai": "^4.0.4",
     "@types/lodash": "^4.14.82",
+    "@types/mocha": "^2.2.44",
+    "chai": "^4.1.2",
+    "coveralls": "^3.0.0",
+    "istanbul": "^0.4.5",
     "lodash": "^4.17.4",
+    "mocha": "^4.0.1",
     "typescript": "^2.6.1"
   }
 }
