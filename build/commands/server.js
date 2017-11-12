@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-function server() {
+function serve() {
     //
 }
-exports.server = server;
+exports.serve = serve;
 //# sourceMappingURL=server.js.map

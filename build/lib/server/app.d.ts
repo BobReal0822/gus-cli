@@ -1,11 +1,28 @@
 /// <reference types="moment" />
 import * as Moment from 'moment';
-export interface AppOptions {
-    port: number;
-    static?: string[];
-    viewPath?: string;
-    desc?: string;
+export interface AppConfigInfo {
+    server: {
+        port: number;
+        static: string[];
+        views?: string;
+        favicon: string;
+    };
+    style: {
+        path: string;
+        items: {
+            [key: string]: string;
+        };
+    };
+    mock: {
+        path: string;
+        active: boolean;
+    };
 }
+export declare const DefaultAppConfig: AppConfigInfo;
+export declare const AppEnvs: {
+    dev: string;
+    pro: string;
+};
 export declare enum AppStatus {
     offline = 1,
     online = 2,
@@ -16,7 +33,7 @@ export declare const ProjectTypes: {
 };
 export interface AppInstance {
     script: string;
-    config: AppOptions;
+    config: AppConfigInfo;
     status: AppStatus;
     type: string;
     desc: string;
@@ -34,6 +51,7 @@ export declare class App {
     constructor(options: ServerOptions);
     static start(name: string): boolean;
     static stop(name: string): any;
+    static serve(name: string): any;
     static list(name: string): typeof App.list;
-    static init(name: string, options: AppOptions, desc?: string): void;
+    static init(name: string, options: AppConfigInfo, desc?: string): void;
 }

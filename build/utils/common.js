@@ -10,20 +10,8 @@ const child_process_1 = require("child_process");
 const Process = require("process");
 const Chokidar = require("chokidar");
 const _ = require("lodash");
+const app_1 = require("./../lib/server/app");
 const packagePath = Path.join(__dirname, './../..', 'package.json');
-const DefaultAppConfig = {
-    server: {
-        port: 3333,
-        static: [
-            'dist',
-            'node_modules'
-        ]
-    },
-    style: {
-        path: './style',
-        items: {}
-    }
-};
 /**
  * Get package version.
  *
@@ -62,10 +50,10 @@ exports.exeCmd = exeCmd;
 function getConfig(name) {
     const path = Path.resolve(name, 'config.json');
     if (!name) {
-        return DefaultAppConfig;
+        return app_1.DefaultAppConfig;
     }
     const config = JSON.parse(Fs.readFileSync(path).toString());
-    return Object.assign({}, _.cloneDeep(DefaultAppConfig), config);
+    return Object.assign({}, _.cloneDeep(app_1.DefaultAppConfig), config);
 }
 exports.getConfig = getConfig;
 function buildStyle(dir, styles, watch) {

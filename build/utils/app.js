@@ -1,7 +1,34 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const Path = require("path");
+const Fse = require("fs-extra");
+const app_1 = require("./../lib/server/app");
+function loadRoutes(path) {
+    const fileRegex = /\.js$/;
+    let data = [];
+    if (Fse.pathExistsSync(path)) {
+        Fse.readdirSync(path).map(file => {
+            if (file && fileRegex.test(file)) {
+                const filePath = Path.resolve(path, file);
+                if (Fse.statSync(filePath).isFile()) {
+                    // tslint:disable-next-line
+                    const module = require(filePath);
+                    const defaultData = module && module.default || [];
+                    if (defaultData && defaultData.length) {
+                        data = data.concat(defaultData);
+                    }
+                }
+                else if (Fse.statSync(filePath).isDirectory()) {
+                    data = data.concat(loadRoutes(filePath));
+                }
+            }
+        });
+    }
+    return data;
+}
 function generateApp(name, type, options) {
-    console.log('options in generatApp: ', name, type, options);
+    const mockRouterPath = Path.resolve('dist', name, options.mock.path);
+    const mockRoutes = loadRoutes(mockRouterPath);
     return `
     const Path = require('path');
     const Koa = require('koa');
@@ -13,7 +40,7 @@ function generateApp(name, type, options) {
 
     ReactView(app, {
       extname: 'js',
-      views: Path.resolve(__dirname, './../../', '${options.viewPath}')
+      views: Path.resolve(__dirname, './../../', '${options.server.views}')
     });
 
     register({
@@ -21,7 +48,7 @@ function generateApp(name, type, options) {
       extensions: [ '.js' ]
     });
 
-    [${(options.static || []).map(item => `'${item}'`)}].map(path => {
+    [${(options.server.static || []).map(item => `'${item}'`)}].map(path => {
       if (path) {
         app.use(Static(Path.resolve(path)));
         app.use(Static(Path.resolve(path, '${name}')));
@@ -30,30 +57,51 @@ function generateApp(name, type, options) {
 
     process.env.browser = 'app-server';
     app.use(async (ctx, next) => {
-      const url = ctx.url || '/';
 
       await next();
-      ctx.state = {
-        app: {
-          name: '${name}',
-          type: '${type}'
-        },
-        viewEngine: 'React',
-        location: url,
-        context: ctx,
-        data: {
-          location: url
-        }
-      };
+      const url = ctx.url || '/';
+      const mock = process.env['${name}'] === '${app_1.AppEnvs.dev}';
+      let matched = false;
+      let data = {};
 
-      return ctx.render('index');
+      if (url === '/favicon.ico') {
+        return ctx.redirect('${options.server.favicon}');
+      }
+
+      if (mock) {
+        ${JSON.stringify(mockRoutes || [])}.map(route => {
+          if (!matched && (ctx.request.method).toLowerCase() === (route.method || '').toLowerCase() && ctx.request.path === route.path) {
+            matched = true;
+            data = route.data || {};
+          }
+        })
+      }
+
+      if (!matched) {
+        ctx.state = {
+          app: {
+            name: '${name}',
+            type: '${type}'
+          },
+          viewEngine: 'React',
+          location: url,
+          context: ctx,
+          data: {
+            location: url
+          }
+        };
+
+        return ctx.render('index');
+      } else {
+        return ctx.body = data;
+      }
     });
 
     app.on('error', (err, ctx) => {
       throw new Error(err)
     });
 
-    app.listen(${options.port});
+    app.listen(${options.server.port});
   `;
 }
 exports.generateApp = generateApp;

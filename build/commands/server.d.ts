@@ -1,1 +1,1 @@
-export declare function server(): void;
+export declare function serve(): void;

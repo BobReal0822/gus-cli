@@ -13,34 +13,9 @@ import { EventEmitter } from 'events';
 
 import * as _ from 'lodash';
 
+import { AppConfigInfo, DefaultAppConfig } from './../lib/server/app';
+
 const packagePath = Path.join(__dirname, './../..', 'package.json');
-
-export interface AppConfigInfo {
-  server: {
-    port: number;
-    static: string[];
-  };
-  style: {
-    path: string;
-    items: {
-      [key: string]: string;
-    }
-  };
-}
-
-const DefaultAppConfig: AppConfigInfo = {
-  server: {
-    port: 3333,
-    static: [
-      'dist',
-      'node_modules'
-    ]
-  },
-  style: {
-    path: './style',
-    items: {}
-  }
-};
 
 /**
  * Get package version.

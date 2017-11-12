@@ -2,9 +2,33 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const Path = require("path");
 const Fs = require("fs-extra");
+const Process = require("process");
 const Moment = require("moment");
 const utils_1 = require("./../../utils");
 const config_1 = require("./../../config");
+exports.DefaultAppConfig = {
+    server: {
+        port: 3333,
+        views: './build/lib/server/view',
+        favicon: './favicon.ico',
+        static: [
+            'dist',
+            'node_modules'
+        ]
+    },
+    style: {
+        path: './style',
+        items: {}
+    },
+    mock: {
+        path: './mock',
+        active: false
+    }
+};
+exports.AppEnvs = {
+    dev: 'development',
+    pro: 'product'
+};
 var AppStatus;
 (function (AppStatus) {
     AppStatus[AppStatus["offline"] = 1] = "offline";
@@ -20,17 +44,9 @@ exports.ProjectTypes = {
     server: 'server'
 };
 const DefaultServerConfig = {};
-const DefaultAppOptions = {
-    port: 3000,
-    static: [
-        'dist',
-        'node_modules'
-    ],
-    viewPath: './build/lib/server/view'
-};
 const DefaultAppInstance = {
     script: '',
-    config: DefaultAppOptions,
+    config: exports.DefaultAppConfig,
     status: AppStatus.offline,
     type: exports.ProjectTypes.project,
     desc: '',
@@ -44,13 +60,14 @@ class App {
     }
     static start(name) {
         const app = this.apps[name];
-        utils_1.log(`start app: ${name} now in port ${app.config.port}`);
+        utils_1.log(`start app: ${name} now in port ${app.config.server.port}`);
         if (!name || !app) {
             utils_1.log(`app: ${name} not exist!`);
             return false;
         }
         try {
-            if (app.script) {
+            if (Fs.statSync(app.script).isFile()) {
+                Process.env[name] = exports.AppEnvs.pro;
                 utils_1.exeCmd([`pm2 start ${app.script}`]);
             }
         }
@@ -62,7 +79,7 @@ class App {
     }
     static stop(name) {
         const script = Path.resolve(config_1.AppConfig.appPath, `${name}.js`);
-        if (!name || !Fs.existsSync(script)) {
+        if (!name || !Fs.statSync(script).isFile()) {
             return utils_1.log.error(`app ${name} does not exist.`);
         }
         try {
@@ -74,6 +91,20 @@ class App {
             throw new Error(`stop ${name} failed: ${err}`);
         }
     }
+    static serve(name) {
+        const script = Path.resolve(config_1.AppConfig.appPath, `${name}.js`);
+        if (!name || !Fs.statSync(script).isFile()) {
+            return utils_1.log.error(`app ${name} does not exist.`);
+        }
+        try {
+            Process.env[name] = exports.AppEnvs.dev;
+            utils_1.exeCmd([`node ${script}`]);
+            utils_1.log(`start a server for app ${name} successfully.`);
+        }
+        catch (err) {
+            throw new Error(`serve ${name} failed: ${err}`);
+        }
+    }
     static list(name) {
         return this.list;
     }
@@ -81,7 +112,8 @@ class App {
         const projectType = exports.ProjectTypes[utils_1.getProjectType(Path.resolve('./'))] || '';
         let app;
         const script = Path.resolve(config_1.AppConfig.appPath, `${name}.js`);
-        options = Object.assign({}, DefaultAppOptions, options);
+        options = Object.assign({}, exports.DefaultAppConfig, options);
+        options.server.views = exports.DefaultAppConfig.server.views;
         Fs.ensureDirSync(config_1.AppConfig.appPath);
         Fs.writeFileSync(script, utils_1.generateApp(name, projectType, options), {
             encoding: 'utf-8'

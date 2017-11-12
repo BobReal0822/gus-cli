@@ -1,5 +1,6 @@
 import * as Path from 'path';
 import * as Fs from 'fs-extra';
+import * as Process from 'process';
 
 import * as Koa from 'koa';
 import * as Static from 'koa-static';
@@ -10,12 +11,49 @@ import * as _ from 'lodash';
 import { getProjectType, log, generateApp, exeCmd, getConfig } from './../../utils';
 import { AppConfig } from './../../config';
 
-export interface AppOptions {
-  port: number;
-  static?: string[];
-  viewPath?: string;
-  desc?: string;
+export interface AppConfigInfo {
+  server: {
+    port: number;
+    static: string[];
+    views?: string;
+    favicon: string;
+  };
+  style: {
+    path: string;
+    items: {
+      [key: string]: string;
+    }
+  };
+  mock: {
+    path: string;
+    active: boolean;
+  };
 }
+
+export const DefaultAppConfig: AppConfigInfo = {
+  server: {
+    port: 3333,
+    views: './build/lib/server/view',
+    favicon: './favicon.ico',
+    static: [
+      'dist',
+      'node_modules'
+    ]
+  },
+  style: {
+    path: './style',
+    items: {}
+  },
+  mock: {
+    path: './mock',
+    active: false
+  }
+};
+
+export const AppEnvs = {
+  dev: 'development',
+  pro: 'product'
+};
 
 export enum AppStatus {
   offline = 1,
@@ -36,7 +74,7 @@ export const ProjectTypes: {
 
 export interface AppInstance {
   script: string;
-  config: AppOptions;
+  config: AppConfigInfo;
   status: AppStatus;
   type: string;
   desc: string;
@@ -51,18 +89,9 @@ export interface ServerOptions {
 const DefaultServerConfig: ServerOptions = {
 };
 
-const DefaultAppOptions: AppOptions = {
-  port: 3000,
-  static: [
-    'dist',
-    'node_modules'
-  ],
-  viewPath: './build/lib/server/view'
-};
-
 const DefaultAppInstance: AppInstance = {
   script: '',
-  config: DefaultAppOptions,
+  config: DefaultAppConfig,
   status: AppStatus.offline,
   type: ProjectTypes.project,
   desc: '',
@@ -84,7 +113,7 @@ export class App {
   static start(name: string) {
     const app = this.apps[name];
 
-    log(`start app: ${ name } now in port ${ app.config.port }`);
+    log(`start app: ${ name } now in port ${ app.config.server.port }`);
     if (!name || !app) {
       log(`app: ${ name } not exist!`);
 
@@ -92,7 +121,8 @@ export class App {
     }
 
     try {
-      if (app.script) {
+      if (Fs.statSync(app.script).isFile()) {
+        Process.env[name] = AppEnvs.pro;
         exeCmd([`pm2 start ${ app.script }`]);
       }
     } catch (err) {
@@ -107,30 +137,49 @@ export class App {
   static stop(name: string) {
     const script = Path.resolve(AppConfig.appPath, `${ name }.js`);
 
-    if (!name || !Fs.existsSync(script)) {
-        return log.error(`app ${ name } does not exist.`);
-      }
+    if (!name || !Fs.statSync(script).isFile()) {
+      return log.error(`app ${ name } does not exist.`);
+    }
 
     try {
-        Fs.unlinkSync(script);
-        exeCmd([`pm2 stop ${ name }`]);
+      Fs.unlinkSync(script);
+      exeCmd([`pm2 stop ${ name }`]);
 
-        log(`stop ${ name } successfully.`);
-      } catch (err) {
-        throw new Error(`stop ${ name } failed: ${ err }`);
-      }
+      log(`stop ${ name } successfully.`);
+    } catch (err) {
+      throw new Error(`stop ${ name } failed: ${ err }`);
+    }
+  }
+
+  static serve(name: string) {
+    const script = Path.resolve(AppConfig.appPath, `${ name }.js`);
+
+    if (!name || !Fs.statSync(script).isFile()) {
+      return log.error(`app ${ name } does not exist.`);
+    }
+
+    try {
+      Process.env[name] = AppEnvs.dev;
+      exeCmd([`node ${ script }`]);
+
+      log(`start a server for app ${ name } successfully.`);
+    } catch (err) {
+      throw new Error(`serve ${ name } failed: ${ err }`);
+    }
   }
 
   static list(name: string) {
     return this.list;
   }
 
-  static init(name: string, options: AppOptions, desc?: string) {
+  static init(name: string, options: AppConfigInfo, desc?: string) {
     const projectType: string = ProjectTypes[getProjectType(Path.resolve('./'))] || '';
     let app: AppInstance;
     const script = Path.resolve(AppConfig.appPath, `${ name }.js`);
 
-    options = Object.assign({}, DefaultAppOptions, options);
+    options = Object.assign({}, DefaultAppConfig, options);
+    options.server.views = DefaultAppConfig.server.views;
+
     Fs.ensureDirSync(AppConfig.appPath);
     Fs.writeFileSync(script, generateApp(name, projectType, options), {
       encoding: 'utf-8'

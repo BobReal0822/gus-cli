@@ -1,15 +1,4 @@
-export interface AppConfigInfo {
-    server: {
-        port: number;
-        static: string[];
-    };
-    style: {
-        path: string;
-        items: {
-            [key: string]: string;
-        };
-    };
-}
+import { AppConfigInfo } from './../lib/server/app';
 /**
  * Get package version.
  *
