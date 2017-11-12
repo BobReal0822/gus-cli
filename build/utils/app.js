@@ -60,7 +60,7 @@ function generateApp(name, type, options) {
 
       await next();
       const url = ctx.url || '/';
-      const mock = process.env['${name}'] === '${app_1.AppEnvs.dev}';
+      const mock = process.env['${name}'] === '${app_1.AppEnvs.dev}' && ${options.mock.active};
       let matched = false;
       let data = {};
 

@@ -46,7 +46,7 @@ export const DefaultAppConfig: AppConfigInfo = {
   },
   mock: {
     path: './mock',
-    active: false
+    active: true
   }
 };
 

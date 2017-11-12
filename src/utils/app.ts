@@ -69,7 +69,7 @@ export function generateApp(name: string, type: string, options: AppConfigInfo) 
 
       await next();
       const url = ctx.url || '/';
-      const mock = process.env['${ name }'] === '${ AppEnvs.dev }';
+      const mock = process.env['${ name }'] === '${ AppEnvs.dev }' && ${ options.mock.active };
       let matched = false;
       let data = {};
 

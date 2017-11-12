@@ -22,7 +22,7 @@ exports.DefaultAppConfig = {
     },
     mock: {
         path: './mock',
-        active: false
+        active: true
     }
 };
 exports.AppEnvs = {
