@@ -3,7 +3,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/ephoton/gus-cli/badge.svg?branch=master)](https://coveralls.io/github/ephoton/gus-cli?branch=master)
 
 # gus-cli
-CLI for gus projects.
+⚒ Command line interface for gus projects.
 
 ## Prerequisites
 - Node.js 7+
