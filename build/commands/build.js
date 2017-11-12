@@ -7,6 +7,7 @@ function build(name, dev) {
     const srcPath = Path.resolve(name, 'init.tsx');
     const outPath = Path.resolve('dist');
     utils_1.exeCmd([
+        'tsc -w',
         `webpack${dev ? '-dev-server' : ''} --entry ${srcPath} --output-path ${outPath} --output-filename ${name}.js --config ${configPath} --color`
     ]);
     const appConfig = utils_1.getConfig(name);

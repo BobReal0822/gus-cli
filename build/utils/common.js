@@ -60,8 +60,10 @@ function buildStyle(dir, styles, watch) {
     const exes = [];
     styles.map(style => {
         if (style && style.dist && style.source) {
-            Fs.ensureFile(style.source);
-            exes.push(`lessc ${style.source} > ${style.dist}`);
+            if (Fs.statSync(style.source).isFile()) {
+                Fs.ensureFileSync(style.dist);
+                exes.push(`lessc ${style.source} > ${style.dist}`);
+            }
             if (!watch) {
                 exports.log(chalk_1.default.yellow(`style built: ${Path.relative(dir, style.source)}`));
             }

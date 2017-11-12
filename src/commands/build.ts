@@ -7,6 +7,7 @@ export function build(name: string, dev?: boolean) {
   const outPath = Path.resolve('dist');
 
   exeCmd([
+    'tsc -w',
     `webpack${ dev ? '-dev-server' : '' } --entry ${ srcPath } --output-path ${ outPath } --output-filename ${ name }.js --config ${ configPath } --color`
   ]);
 

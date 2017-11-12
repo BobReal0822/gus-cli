@@ -73,8 +73,10 @@ export function buildStyle(dir: string, styles: { source: string; dist: string }
   const exes: string[] = [];
   styles.map(style => {
     if (style && style.dist && style.source) {
-      Fs.ensureFile(style.source);
-      exes.push(`lessc ${ style.source } > ${ style.dist }`);
+      if (Fs.statSync(style.source).isFile()) {
+        Fs.ensureFileSync(style.dist);
+        exes.push(`lessc ${ style.source } > ${ style.dist }`);
+      }
 
       if (!watch) {
         log(chalk.yellow(`style built: ${ Path.relative(dir, style.source) }`));
