@@ -2,6 +2,9 @@ import * as Path from 'path';
 import * as Fse from 'fs-extra';
 import { AppConfigInfo, AppEnvs } from './../lib/server/app';
 
+
+const configPath = Path.resolve(__dirname, './../config/webpack/dev.js');
+
 interface MockDataInfo {
   path: string;
   data: {};
@@ -44,8 +47,28 @@ export function generateApp(name: string, type: string, options: AppConfigInfo) 
     const Static = require('koa-static');
     const ReactView = require('koa-react-view');
     const register = require('babel-register');
+    const mock = process.env['${ name }'] === '${ AppEnvs.dev }' && ${ options.mock.active };
 
     const app = new Koa();
+
+    if (mock) {
+      const webpack = require('webpack');
+      const webpackConfig = require('${ configPath }')({
+        entry: '${ Path.resolve(name, 'init.tsx') }',
+        outputFilename: '${ name }.js',
+        outputPath: '${ Path.resolve('dist') }'
+      });
+      const compiler = webpack(webpackConfig);
+      const kwm = require('koa-webpack-middleware');
+
+      app.use(kwm.devMiddleware(compiler, {
+        noInfo: false,
+        stats: {
+          colors: true
+        }})
+      );
+      app.use(kwm.hotMiddleware(compiler));
+    }
 
     ReactView(app, {
       extname: 'js',
@@ -65,11 +88,11 @@ export function generateApp(name: string, type: string, options: AppConfigInfo) 
     });
 
     process.env.browser = 'app-server';
+
     app.use(async (ctx, next) => {
 
       await next();
       const url = ctx.url || '/';
-      const mock = process.env['${ name }'] === '${ AppEnvs.dev }' && ${ options.mock.active };
       let matched = false;
       let data = {};
 

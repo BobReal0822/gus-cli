@@ -4,7 +4,7 @@ import * as chalk from 'chalk';
 import * as cmd from 'commander';
 import * as process from 'process';
 
-import { init, start, stop, dev, build, serve } from './commands';
+import { init, start, stop, dev, build } from './commands';
 import { getVersion, log, setMaxListeners } from './utils';
 
 setMaxListeners();
@@ -33,14 +33,6 @@ cmd.command('init [type] [app]')
 
     init(type, name, options);
   });
-
-// serve
-cmd.command('serve <app>')
-.description('start a serve for gus app.')
-.action((app: string, options: any) => {
-  console.log('app in serve: ', app);
-  serve(app);
-});
 
 // start
 cmd.command('start <app>')

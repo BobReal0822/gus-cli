@@ -2,13 +2,13 @@ import * as Path from 'path';
 import { log, exeCmd, getConfig, buildStyle } from './../utils';
 
 export function build(name: string, dev?: boolean) {
-  const configPath = Path.resolve(__dirname, './../config/webpack/app.js');
+  const configPath = Path.resolve(__dirname, './../config/webpack/build.js');
   const srcPath = Path.resolve(name, 'init.tsx');
   const outPath = Path.resolve('dist');
 
   exeCmd([
-    'tsc -w',
-    `webpack${ dev ? '-dev-server' : '' } --entry ${ srcPath } --output-path ${ outPath } --output-filename ${ name }.js --config ${ configPath } --color`
+    `tsc ${ dev ? '-w' : '' }`,
+    `webpack --entry ${ srcPath } --output-path ${ outPath } --output-filename ${ name }.js --config ${ configPath } --color`
   ]);
 
   const appConfig = getConfig(name);

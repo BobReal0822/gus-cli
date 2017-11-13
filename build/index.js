@@ -27,13 +27,6 @@ cmd.command('init [type] [app]')
     console.log('type & app & options in Init: ', type, app);
     commands_1.init(type, name, options);
 });
-// serve
-cmd.command('serve <app>')
-    .description('start a serve for gus app.')
-    .action((app, options) => {
-    console.log('app in serve: ', app);
-    commands_1.serve(app);
-});
 // start
 cmd.command('start <app>')
     .description('start an app.')

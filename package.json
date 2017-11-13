@@ -1,6 +1,6 @@
 {
   "name": "gus-cli",
-  "version": "1.0.0",
+  "version": "1.0.11",
   "description": "",
   "main": "build/index.js",
   "typings": "build/index.d.ts",
@@ -45,6 +45,7 @@
     "css-loader": "^0.28.7",
     "debug": "^3.1.0",
     "escape-html": "^1.0.3",
+    "eventsource-polyfill": "^0.9.6",
     "fs-extra": "^4.0.2",
     "generator-ts-lib": "^1.0.13",
     "inquirer": "^3.3.0",
@@ -53,6 +54,7 @@
     "koa-router": "^7.2.1",
     "koa-static": "^4.0.1",
     "koa-views": "^6.1.1",
+    "koa-webpack-middleware": "^1.0.7",
     "less": "^2.7.3",
     "less-loader": "^4.0.5",
     "moment": "^2.19.1",
@@ -64,7 +66,7 @@
     "ts-loader": "^3.1.1",
     "url-loader": "^0.6.2",
     "webpack": "^3.8.1",
-    "webpack-dev-server": "^2.9.4",
+    "webpack-hot-middleware": "^2.20.0",
     "yeoman-generator": "^2.0.1"
   },
   "devDependencies": {

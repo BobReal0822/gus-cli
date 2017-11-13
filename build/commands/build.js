@@ -3,12 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Path = require("path");
 const utils_1 = require("./../utils");
 function build(name, dev) {
-    const configPath = Path.resolve(__dirname, './../config/webpack/app.js');
+    const configPath = Path.resolve(__dirname, './../config/webpack/build.js');
     const srcPath = Path.resolve(name, 'init.tsx');
     const outPath = Path.resolve('dist');
     utils_1.exeCmd([
-        'tsc -w',
-        `webpack${dev ? '-dev-server' : ''} --entry ${srcPath} --output-path ${outPath} --output-filename ${name}.js --config ${configPath} --color`
+        `tsc ${dev ? '-w' : ''}`,
+        `webpack --entry ${srcPath} --output-path ${outPath} --output-filename ${name}.js --config ${configPath} --color`
     ]);
     const appConfig = utils_1.getConfig(name);
     const { path, items } = appConfig.style;
