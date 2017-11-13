@@ -32,7 +32,7 @@ export interface AppConfigInfo {
 
 export const DefaultAppConfig: AppConfigInfo = {
   server: {
-    port: 3333,
+    port: 4000,
     views: './build/lib/server/view',
     favicon: './favicon.ico',
     static: [

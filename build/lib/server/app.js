@@ -8,7 +8,7 @@ const utils_1 = require("./../../utils");
 const config_1 = require("./../../config");
 exports.DefaultAppConfig = {
     server: {
-        port: 3333,
+        port: 4000,
         views: './build/lib/server/view',
         favicon: './favicon.ico',
         static: [

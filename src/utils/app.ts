@@ -7,6 +7,7 @@ const configPath = Path.resolve(__dirname, './../config/webpack/dev.js');
 
 interface MockDataInfo {
   path: string;
+  method: 'get' | 'post' | 'delete' | 'head' | 'put';
   data: {};
 }
 
