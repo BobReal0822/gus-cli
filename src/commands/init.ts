@@ -62,7 +62,6 @@ export function init(type: string, name: string, options?: any) {
   } else if (!name) {
     selectName(type);
   } else if (InitData.types.indexOf(type) > -1) {
-    console.log('should generate now: ', type, name);
     generate(type, name);
   } else {
     log.error(`Error, init type is invalid: ${ type }`);

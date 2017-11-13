@@ -47,7 +47,6 @@ function init(type, name, options) {
         selectName(type);
     }
     else if (InitData.types.indexOf(type) > -1) {
-        console.log('should generate now: ', type, name);
         generate(type, name);
     }
     else {

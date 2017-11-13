@@ -8,7 +8,7 @@ export function build(name: string, dev?: boolean) {
 
   exeCmd([
     `tsc ${ dev ? '-w' : '' }`,
-    `webpack --entry ${ srcPath } --output-path ${ outPath } --output-filename ${ name }.js --config ${ configPath } --color`
+    `webpack --entry ${ srcPath } --output-path ${ outPath } --output-filename ${ name }.js --config ${ configPath } ${ dev ? '--watch' : '' } --color`
   ]);
 
   const appConfig = getConfig(name);
@@ -22,7 +22,6 @@ export function build(name: string, dev?: boolean) {
     if (key && items[key]) {
       const source = Path.resolve(name, items[key]);
       const dist = Path.resolve('dist', name, appConfig.style.path, `${ key }.css`);
-
 
       styles.push({
         source,

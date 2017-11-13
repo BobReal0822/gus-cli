@@ -8,7 +8,7 @@ function build(name, dev) {
     const outPath = Path.resolve('dist');
     utils_1.exeCmd([
         `tsc ${dev ? '-w' : ''}`,
-        `webpack --entry ${srcPath} --output-path ${outPath} --output-filename ${name}.js --config ${configPath} --color`
+        `webpack --entry ${srcPath} --output-path ${outPath} --output-filename ${name}.js --config ${configPath} ${dev ? '--watch' : ''} --color`
     ]);
     const appConfig = utils_1.getConfig(name);
     const { path, items } = appConfig.style;

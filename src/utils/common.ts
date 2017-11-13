@@ -47,7 +47,7 @@ export function exeCmd(cmds: string[], noOut?: boolean) {
     if (!noOut) {
       exe.stdout.pipe(Process.stdout);
       exe.on('exit', code => {
-        log.warning(`child process exited with code ${ code.toString() }`);
+        log.warning(`child process [ ${ cmd } ] exited with code ${ code.toString() }`);
       });
     }
     exe.stderr.pipe(Process.stderr);
