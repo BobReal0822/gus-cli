@@ -23,7 +23,7 @@ cmd.command('dev <app>')
     dev(app);
   });
 
-cmd.command('init [type] [app]')
+cmd.command('init [type] [name]')
   .description('init a project, which should be [lib | koa | express].')
   .option('-s, --setup_mode [mode]', 'Which setup mode to use')
   .action((type: string, app: string, options: any) => {
