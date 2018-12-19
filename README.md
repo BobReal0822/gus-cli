@@ -1,5 +1,5 @@
 # gus
-⚒ Command line tool for front-end apps of gusurali.io
+⚒ Command line tool for gus apps.
 
 ## Prerequisites
 - Node.js 8+
