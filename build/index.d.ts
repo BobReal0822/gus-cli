@@ -1,1 +1,2 @@
-export declare const GusCli: {};
+#!/usr/bin/env node
+export {};

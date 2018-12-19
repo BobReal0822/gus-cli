@@ -3,52 +3,47 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const cmd = require("commander");
 const process = require("process");
-const commands_1 = require("./commands");
-const utils_1 = require("./utils");
-utils_1.setMaxListeners();
-cmd.version(utils_1.getVersion());
-// build
-cmd.command('build <app>')
-    .description('build an app.')
-    .action((app, options) => {
-    commands_1.build(app);
+const cmd_1 = require("./cmd");
+const lib_1 = require("./lib");
+const util_1 = require("./util");
+cmd.version(util_1.getVersion());
+cmd.command('init [type] [name]')
+    .description('Init an app, which should be [website | spa].')
+    .option('-t, --typescript', 'Use typescript or not.')
+    .action((type, name, options) => {
+    cmd_1.init(type, name, options);
 });
-// dev
-cmd.command('dev <app>')
-    .description('build and watch an app in development mode.')
-    .action((app, options) => {
-    commands_1.dev(app);
+cmd.command('add [path] [name]')
+    .description('Add a page.')
+    .action((path, name) => {
+    cmd_1.add(path, name);
 });
-// init
-cmd.command('init [type] [app]')
-    .description('init a project, which should be [lib | koa | express].')
-    .option('-s, --setup_mode [mode]', 'Which setup mode to use')
-    .action((type, app, options) => {
-    console.log('type & app & options in Init: ', type, app);
-    commands_1.init(type, name, options);
+cmd.command('build')
+    .description('Build an app before deploying.')
+    .option('-w, --watch', 'Build and watch.')
+    .option('-p, --pre-deploy', 'Build and bind pre-deploy environment.')
+    .action((options) => {
+    cmd_1.build(false, !!options.watch, !!options.preDeploy);
 });
-// start
-cmd.command('start <app>')
-    .description('start an app.')
-    .action((app, options) => {
-    console.log('app in start: ', app);
-    commands_1.start(app);
+cmd.command('dev')
+    .description('Build and watch in development mode.')
+    .action(() => {
+    cmd_1.dev();
 });
-// stop
-cmd.command('stop <app>')
-    .description('stop an app.')
-    .action((app, options) => {
-    commands_1.stop(app);
+cmd.command('publish')
+    .description('Publish statics to CDN server, including js, css and images.')
+    .option('-c, --clear', 'Clear the bucket before publish.')
+    .action((options) => {
+    cmd_1.publish(options && options.clear);
 });
 cmd.command('*')
     .action((...args) => {
     args.pop();
-    utils_1.log.error(`  Error: ommand not found: ${args.join(' ')}`);
+    lib_1.log.error(`  Error: command not found: ${args.join(' ')}`);
     cmd.outputHelp();
 });
 cmd.parse(process.argv);
 if (!cmd.args.length) {
     cmd.outputHelp();
 }
-exports.GusCli = {};
 //# sourceMappingURL=index.js.map
