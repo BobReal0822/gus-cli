@@ -7,7 +7,7 @@
 
 ## Installation
 ```bash
-1. git clone git@github.com:gusurali/gus.git
+1. git clone git@github.com:ephoton/gus-cli.git
 2. cd gus-cli && yarn && tsc && npm link
 ```
 
