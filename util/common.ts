@@ -1,4 +1,3 @@
-
 import * as Path from 'path';
 import { exec } from 'child_process';
 import * as Process from 'process';
@@ -16,7 +15,7 @@ const packagePath = Path.join(__dirname, './../..', 'package.json');
 export function getVersion(): string {
   const packageInfo = JSON.parse(Fs.readFileSync(packagePath, 'utf8'));
 
-  return packageInfo && packageInfo.version || 'Version invalid!';
+  return (packageInfo && packageInfo.version) || 'Version invalid!';
 }
 
 /**
@@ -27,23 +26,26 @@ export function getVersion(): string {
  * @param {boolean} [noOut]
  */
 export function exeCmd(cmds: string[], noOut?: boolean) {
-
   cmds.map((cmd: string) => {
     if (cmd) {
-      const exe = exec(`${ cmd } --color`, {
+      const exe = exec(`${cmd} --color`, {
         maxBuffer: 10 * 1024 * 1024
       });
 
       if (!noOut) {
-        exe.stdout.pipe(Process.stdout);
+        if (exe && exe.stdout && exe.stdout.pipe) {
+          exe.stdout.pipe(Process.stdout);
+        }
         exe.on('exit', (code, signal) => {
           // log.warning(`child process [ ${ cmd } ] exited with code ${ code.toString()}, signal: ${ signal }`);
         });
       }
 
-      exe.stderr.pipe(Process.stderr);
+      if (exe && exe.stderr && exe.stderr.pipe) {
+        exe.stderr.pipe(Process.stderr);
+      }
       exe.on('error', (err: any) => {
-        throw new Error(`${ cmd }: ${ err }`);
+        throw new Error(`${cmd}: ${err}`);
       });
     }
   });
