@@ -21,7 +21,11 @@ export interface WebpackConfigInfo {
 export const webpackConfig = (options: WebpackConfigInfo, useOss: boolean) => {
   const { entry, viewDir, staticDir, distDir, dev } = options;
   const ossPath = 'https://ni-web.oss-cn-beijing.aliyuncs.com/static/';
-  const env = dev ? 'development' : options.preDeploy ? 'pre-deploy' : 'production';
+  const env = dev
+    ? 'development'
+    : options.preDeploy
+    ? 'pre-deploy'
+    : 'production';
 
   process.env.NODE_ENV = env;
   const res = `
@@ -43,11 +47,17 @@ export const webpackConfig = (options: WebpackConfigInfo, useOss: boolean) => {
         .argv;
 
     const config = {
-      entry: ${ JSON.stringify(entry) },
+      entry: ${JSON.stringify(entry)},
       output: {
-        publicPath: '${ dev ? `http://localhost:8080/${ Path.join(distDir, staticDir) }/` : (useOss ? ossPath : '/') }',
-        path: Path.resolve('${ distDir }', '${ staticDir }'),
-        filename: '[name]${ dev ? '' : '.[hash:8]' }.js',
+        publicPath: '${
+          dev
+            ? `http://localhost:8080/${Path.join(distDir, staticDir)}/`
+            : useOss
+            ? ossPath
+            : '/'
+        }',
+        path: Path.resolve('${distDir}', '${staticDir}'),
+        filename: '[name]${dev ? '' : '.[hash:8]'}.js',
         chunkFilename: '[id].[hash:8].js'
       },
       module: {
@@ -141,29 +151,35 @@ export const webpackConfig = (options: WebpackConfigInfo, useOss: boolean) => {
       },
       plugins: [
         new ManifestPlugin({
-          publicPath: '${ dev ? `http://localhost:8080/${ Path.join(distDir, staticDir) }/` : (useOss ? ossPath : '/') }'
+          publicPath: '${
+            dev
+              ? `http://localhost:8080/${Path.join(distDir, staticDir)}/`
+              : useOss
+              ? ossPath
+              : '/'
+          }'
         }),
         new webpack.HashedModuleIdsPlugin(),
         new WriteFilePlugin(),
         new CopyWebpackPlugin([{
-          from: Path.resolve('${ viewDir }'),
-          to: Path.resolve('${ distDir }', '${ viewDir }'),
+          from: Path.resolve('${viewDir}'),
+          to: Path.resolve('${distDir}', '${viewDir}'),
           force: true
         }, {
-          from: Path.resolve('${ staticDir }/*.ico'),
-          to: Path.resolve('${ distDir }'),
+          from: Path.resolve('${staticDir}/*.ico'),
+          to: Path.resolve('${distDir}'),
           force: true
         }, {
-          from: Path.resolve('${ staticDir }/js/**/*.js'),
-          to: Path.resolve('${ distDir }'),
+          from: Path.resolve('${staticDir}/js/**/*.js'),
+          to: Path.resolve('${distDir}'),
           force: true
         }, {
-          from: Path.resolve('${ staticDir }/css/**/*.css'),
-          to: Path.resolve('${ distDir }'),
+          from: Path.resolve('${staticDir}/css/**/*.css'),
+          to: Path.resolve('${distDir}'),
           force: true
         }]),
         new webpack.DefinePlugin({
-          'process.env.NODE_ENV':  JSON.stringify('${ env }')
+          'process.env.NODE_ENV':  JSON.stringify('${env}')
         })
       ],
       resolve: {
@@ -194,14 +210,12 @@ export const webpackConfig = (options: WebpackConfigInfo, useOss: boolean) => {
       }
     };
 
-    config.devtool = '${ dev ? 'source-map' : '' }';
+    config.devtool = '${dev ? 'source-map' : ''}';
     if (!${dev}) {
       config.plugins.push(
         new UglifyJsPlugin({
           uglifyOptions: {
-            compress: {
-              warnings: false
-            }
+            warnings: false
           },
           parallel: true
         })
