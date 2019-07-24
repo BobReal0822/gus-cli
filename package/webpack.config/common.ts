@@ -47,6 +47,7 @@ export const webpackConfig = (options: WebpackConfigInfo, useOss: boolean) => {
         .argv;
 
     const config = {
+      bail: true,
       entry: ${JSON.stringify(entry)},
       output: {
         publicPath: '${
