@@ -206,18 +206,20 @@ export const webpackConfig = (options: WebpackConfigInfo, useOss: boolean) => {
               minChunks: 2
             }
           }
-        }
+        },
+        minimizer: []
       }
     };
 
     config.devtool = '${dev ? 'source-map' : ''}';
     if (!${dev}) {
-      config.plugins.push(
+      config.optimization.minimizer.push(
         new UglifyJsPlugin({
+          parallel: true,
+          cache: true,
           uglifyOptions: {
             warnings: false
-          },
-          parallel: true
+          }
         })
       );
     }

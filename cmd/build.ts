@@ -149,7 +149,7 @@ function buildSpa(
   exeCmd([
     `${dev ? 'webpack-dev-server --hot' : 'webpack'}  --config ${configFile} ${
       watch ? '--watch' : ''
-    } --mode ${dev ? 'development' : 'production'}`
+    } --mode ${dev ? 'development' : 'production'} --inline=false`
   ]);
 }
 

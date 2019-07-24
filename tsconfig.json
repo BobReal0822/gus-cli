@@ -15,16 +15,10 @@
     "noImplicitThis": true,
     "stripInternal": true,
     "skipDefaultLibCheck": true,
-    "typeRoots": [
-      "./node_modules/@types/",
-      "./typings"
-    ],
+    "typeRoots": ["./node_modules/@types/", "./typings"],
     "newLine": "LF",
     "outDir": "build",
     "rootDir": "./"
   },
-  "exclude": [
-    "node_modules",
-    "build"
-  ]
+  "exclude": ["node_modules", "build"]
 }
