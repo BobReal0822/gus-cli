@@ -37,7 +37,11 @@ export function exeCmd(cmds: string[], noOut?: boolean) {
           exe.stdout.pipe(Process.stdout);
         }
         exe.on('exit', (code, signal) => {
-          // log.warning(`child process [ ${ cmd } ] exited with code ${ code.toString()}, signal: ${ signal }`);
+          console.log(
+            `child process [ ${cmd} ] exited with code ${code &&
+              code.toString()}, signal: ${signal}`
+          );
+          Process.exit(code || 0);
         });
       }
 
