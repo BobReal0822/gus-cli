@@ -1,15 +1,22 @@
-
 import * as Path from 'path';
 import * as Process from 'process';
 import { prompt } from 'inquirer';
 
 import { log } from './../lib';
 import { exeCmd, getProjectInfo, getConfig } from './../util';
-import { generateWebsitePage, generateSpaPage, WebsiteServerConfigInfo, SpaServerConfigInfo } from './../package';
+import {
+  generateWebsitePage,
+  generateSpaPage,
+  WebsiteServerConfigInfo,
+  SpaServerConfigInfo
+} from './../package';
 import { DefaultWebsiteServerConfig } from './build';
 
 const projectType = getProjectInfo(Path.resolve('./')).type || '';
-const config = getConfig<WebsiteServerConfigInfo | SpaServerConfigInfo>(Path.resolve('./config.json'), DefaultWebsiteServerConfig);
+const config = getConfig<WebsiteServerConfigInfo | SpaServerConfigInfo>(
+  Path.resolve('./config.json'),
+  DefaultWebsiteServerConfig
+);
 const pathValidate = /^[\w\-\/\.]+$/;
 const nameValidate = /^[\w\-]+$/;
 const cmdMapping: {
@@ -54,17 +61,17 @@ export function add(path: string, name: string) {
  * Input path for module.
  */
 function inputPath() {
-  prompt([{
-    type: 'input',
-    name: 'path',
-    message: 'Please input path:',
-    default: `${ projectType }-page`,
-    validate: (input: string) => {
-      return pathValidate.test(input) || 'Path input format error!';
+  prompt([
+    {
+      type: 'input',
+      name: 'path',
+      message: 'Please input path:',
+      default: `${projectType}-page`,
+      validate: (input: string) => {
+        return pathValidate.test(input) || 'Path input format error!';
+      }
     }
-  }]).then((answer: {
-    [key: string]: string;
-  }) => {
+  ]).then((answer: any) => {
     inputName(answer['path'] || '');
   });
 }
@@ -75,17 +82,17 @@ function inputPath() {
  * @param {string} path
  */
 function inputName(path: string) {
-  prompt([{
-    type: 'input',
-    name: 'name',
-    message: 'Please input name:',
-    default: `${ projectType }-page`,
-    validate: (input: string) => {
-      return nameValidate.test(input) || 'Name input format error!';
+  prompt([
+    {
+      type: 'input',
+      name: 'name',
+      message: 'Please input name:',
+      default: `${projectType}-page`,
+      validate: (input: string) => {
+        return nameValidate.test(input) || 'Name input format error!';
+      }
     }
-  }]).then((answer: {
-    [key: string]: string;
-  }) => {
+  ]).then((answer: any) => {
     const name = answer['name'] || '';
     addModule(path, name);
   });

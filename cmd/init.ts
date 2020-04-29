@@ -6,8 +6,7 @@ import { default as chalk } from 'chalk';
 import { log } from './../lib';
 import { exeCmd } from './../util';
 
-export interface InitOptionsInterface {
-}
+export interface InitOptionsInterface {}
 
 export interface InitNameInterface {
   [key: string]: {
@@ -18,11 +17,19 @@ export interface InitNameInterface {
 
 export const InitTypeMapping: InitNameInterface = {
   website: {
-    cmd: `yo ${ Path.resolve(__dirname, './../..', 'node_modules/generator-ws-app//generators/app/index.js') }`,
+    cmd: `yo ${Path.resolve(
+      __dirname,
+      './../..',
+      'node_modules/generator-ws-app//generators/app/index.js'
+    )}`,
     desc: 'yo ws-app'
   },
   spa: {
-    cmd: `yo ${ Path.resolve(__dirname, './../..', 'node_modules/generator-spa-app//generators/app/index.js') }`,
+    cmd: `yo ${Path.resolve(
+      __dirname,
+      './../..',
+      'node_modules/generator-spa-app//generators/app/index.js'
+    )}`,
     desc: 'yo spa-app'
   }
 };
@@ -43,7 +50,7 @@ export function init(type: string, name: string, options?: any) {
   } else if (type in InitTypeMapping) {
     generate(type, name);
   } else {
-    log.error(`Error, init type is invalid: ${ type }`);
+    log.error(`Error, init type is invalid: ${type}`);
   }
 }
 
@@ -51,15 +58,15 @@ export function init(type: string, name: string, options?: any) {
  * Select project type for command 'init', should be 'website' or 'spa(single page application)'.
  */
 function selectProject() {
-  prompt([{
-    type: 'list',
-    name: 'project',
-    message: 'Please select project type:',
-    default: 0,
-    choices: Object.keys(InitTypeMapping)
-  }]).then((answer: {
-    [key: string]: string;
-  }) => {
+  prompt([
+    {
+      type: 'list',
+      name: 'project',
+      message: 'Please select project type:',
+      default: 0,
+      choices: Object.keys(InitTypeMapping)
+    }
+  ]).then((answer: any) => {
     inputName(answer['project'] || '');
   });
 }
@@ -75,21 +82,21 @@ function inputName(type: string) {
     Process.exit(1);
   }
 
-  prompt([{
-    type: 'input',
-    name: 'name',
-    message: `Please input ${ type } name:`,
-    default: `gus-${ type }`,
-    validate: (input: string) => {
-      return /^[\w\-]+$/.test(input) || 'Input format error!';
+  prompt([
+    {
+      type: 'input',
+      name: 'name',
+      message: `Please input ${type} name:`,
+      default: `gus-${type}`,
+      validate: (input: string) => {
+        return /^[\w\-]+$/.test(input) || 'Input format error!';
+      }
     }
-  }]).then((nameAnswer: {
-    [key: string]: string;
-  }) => {
+  ]).then((nameAnswer: any) => {
     const name = nameAnswer['name'] || '';
 
     if (!name) {
-      return log.error(`${ type } name can't be null! \n`);
+      return log.error(`${type} name can't be null! \n`);
     }
 
     generate(type, name);
@@ -112,10 +119,9 @@ function generate(type: string, name: string, options?: InitOptionsInterface) {
   }
 
   log(`
-    run gus init ${ type } ${ chalk.yellow(name) } now:
-    begin to ${ chalk.yellow(command.desc) }
+    run gus init ${type} ${chalk.yellow(name)} now:
+    begin to ${chalk.yellow(command.desc)}
   `);
 
   exeCmd([command.cmd]);
 }
-
