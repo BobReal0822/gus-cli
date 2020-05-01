@@ -21,7 +21,7 @@ export type SpaServerConfigInfo = BaseServerConfigInfo & {
   mock: {
     path: string;
     active: boolean;
-  }
+  };
 };
 
 interface MockDataInfo {
@@ -43,12 +43,11 @@ function loadRoutes(path: string): MockDataInfo[] {
   let data: MockDataInfo[] = [];
 
   if (Fs.pathExistsSync(path)) {
-
     Fs.readdirSync(path).map((file: string) => {
       const filePath = Path.resolve(path, file);
       if (file && fileRegex.test(file) && Fs.statSync(filePath).isFile()) {
         const module = require(filePath);
-        const defaultData: MockDataInfo[] = module && module.default || [];
+        const defaultData: MockDataInfo[] = (module && module.default) || [];
 
         if (defaultData && defaultData.length) {
           data = data.concat(defaultData);
@@ -119,7 +118,9 @@ export class Server<T extends BaseServerConfigInfo> {
    * @memberof Server
    */
   private generate() {
-    const { config: { outDir, server } } = this as any;
+    const {
+      config: { outDir, server }
+    } = this as any;
 
     Fs.ensureDirSync(Path.resolve(outDir, server.view));
     const { mock } = this.config as any;
@@ -134,30 +135,46 @@ const Process = require('process');
 const Koa = require('koa');
 const Hbs = require('koa-hbs');
 const StaticCache = require('koa-static-cache');
-const mock = ${ process.env.NODE_ENV === 'development' && mock && mock.active };
-const manifest = require('${ Path.resolve(outDir, server.static, './manifest.json') }');
+const mock = ${process.env.NODE_ENV === 'development' && mock && mock.active};
+const manifest = require('${Path.resolve(
+      outDir,
+      server.static,
+      './manifest.json'
+    )}');
 const app = new Koa();
 
 app.use(Hbs.middleware({
-  viewPath: Path.resolve(__dirname, '${ server.view }'),
+  viewPath: Path.resolve(__dirname, '${server.view}'),
   extname: '.html'
 }));
 
-app.use(StaticCache(Path.resolve(__dirname, '${ server.static }')));
+app.use(StaticCache(Path.resolve(__dirname, '${server.static}')));
 
 Hbs.registerHelper('url', (target) => {
   return target in manifest ? manifest[target] : target;
 });
 
+Hbs.registerHelper('group', (target) => {
+  let res = '<div>';
+
+  Object.keys(manifest).map(item => {
+    if (item.indexOf(target + '~') > -1) {
+      res += '<script src="' + manifest[item] + '"></script>';
+    }
+  });
+
+  return new Hbs.SafeString(res + '</div>');
+});
+
 app.use(async (ctx, next) => {
   await next();
 
-  if (${ !!(this.config && this.config as any).entry }) {
+  if (${!!(this.config && (this.config as any)).entry}) {
     let matched = false;
     let result = {};
 
     if (mock) {
-      ${ JSON.stringify(mockRoutes || []) }.map(route => {
+      ${JSON.stringify(mockRoutes || [])}.map(route => {
         if (route && !matched && (ctx.request.method).toLowerCase() === (route.method || '').toLowerCase() && ctx.request.path === route.path) {
           matched = true;
           result = route.result || {};
@@ -175,7 +192,9 @@ app.use(async (ctx, next) => {
     let matches = /(.+)\\/$/.exec(url);
     let matchedUrl = matches && matches[1];
 
-    const pages = '${ getFiles(Path.resolve(server.view)).map(item => item.path.substr(0, item.path.length - item.ext.length)) }'.split(',');
+    const pages = '${getFiles(Path.resolve(server.view)).map((item: any) =>
+      item.path.substr(0, item.path.length - item.ext.length)
+    )}'.split(',');
     pages.push('');
     url = url.slice(1, url.length);
     matchedUrl = matchedUrl && matchedUrl.slice(1, matchedUrl.length);
@@ -201,7 +220,7 @@ app.on('error', (err, ctx) => {
   }
 });
 
-app.listen(${ server.port });
+app.listen(${server.port});
     `;
   }
 }

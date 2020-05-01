@@ -194,18 +194,23 @@ export const webpackConfig = (options: WebpackConfigInfo, useOss: boolean) => {
         progress: true,
         disableHostCheck: false
       },
+      // externals: {
+      //   react: 'React',
+      //   antd: 'antd'
+      // },
       optimization: {
         splitChunks: {
-          chunks: 'all',
-          name: 'common',
+          // chunks: 'all',
+          // name: 'common',
           cacheGroups: {
-            chunks: 'initial',
+            // default: false,
             commons: {
+              test: /[\\/]node_modules[\\/]/,
               name: 'common',
-              test: /react|lodash|antd|moment|history|axios|react-dom|react-router-dom/,
-              chunks: 'initial',
-              minChunks: 2
-            }
+              chunks: 'all',
+              maxSize: 500000,
+              // minChunks: 2
+           }
           }
         },
         minimizer: []
