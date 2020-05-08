@@ -220,13 +220,13 @@ export const webpackConfig = (options: WebpackConfigInfo, useOss: boolean) => {
     config.devtool = '${dev ? 'source-map' : ''}';
     if (!${dev}) {
       config.optimization.minimizer.push(
-        new UglifyJsPlugin({
-          parallel: true,
-          cache: true,
-          uglifyOptions: {
-            warnings: false
-          }
-        })
+        // new UglifyJsPlugin({
+          // parallel: true,
+          // cache: true,
+          // uglifyOptions: {
+          //   warnings: false
+          // }
+        // })
       );
     }
     module.exports = config;
