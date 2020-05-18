@@ -9,6 +9,9 @@ export interface BaseServerConfigInfo {
     port: number;
     static: string;
     view: string;
+    seo?: {
+      path: string;
+    };
   };
 }
 
@@ -54,6 +57,25 @@ function loadRoutes(path: string): MockDataInfo[] {
         }
       } else if (Fs.statSync(filePath).isDirectory()) {
         data = data.concat(loadRoutes(filePath));
+      }
+    });
+  }
+
+  return data;
+}
+
+function loadPages(path: string): string[] {
+  const data: string[] = [];
+
+  console.log('get path in loadPages: ', path);
+  if (Fs.pathExistsSync(path)) {
+    Fs.readdirSync(path).map((file: string) => {
+      const fileReg = /^(.+)\.html$/;
+      const fileMatches = fileReg.exec(file);
+
+      console.log('get fileMatches in loadPages: ', fileMatches);
+      if (fileMatches && fileMatches[1]) {
+        data.push(fileMatches[1]);
       }
     });
   }
@@ -123,9 +145,13 @@ export class Server<T extends BaseServerConfigInfo> {
     } = this as any;
 
     Fs.ensureDirSync(Path.resolve(outDir, server.view));
-    const { mock } = this.config as any;
+    const { mock, seo } = this.config as any;
     const mockRouterPath = mock && Path.resolve(mock.path);
     const mockRoutes = mock && loadRoutes(mockRouterPath);
+    const seoMappings = seo?.path
+      ? loadPages(Path.resolve(server.view, seo.path))
+      : [];
+    const seoPath = seo?.path || '';
     // const nodeEnv = process.env.NODE_ENV;
 
     return `
@@ -172,20 +198,52 @@ app.use(async (ctx, next) => {
   if (${!!(this.config && (this.config as any)).entry}) {
     let matched = false;
     let result = {};
+    const userAgent = ctx.headers['user-agent'];
+    const spiderUA = /Chrome|Baiduspider|bingbot|Googlebot|360spider|Sogou|Yahoo! Slurp/;
+    const isSpider = spiderUA.test(userAgent);
+    const seoPath = '${seoPath}';
 
-    if (mock) {
-      ${JSON.stringify(mockRoutes || [])}.map(route => {
-        if (route && !matched && (ctx.request.method).toLowerCase() === (route.method || '').toLowerCase() && ctx.request.path === route.path) {
-          matched = true;
-          result = route.result || {};
+    console.log('get user agent : ', userAgent)
+
+    if (isSpider) {
+      let url = ctx.url || '/';
+      const seoPages = ${JSON.stringify(seoMappings)};
+
+      console.log('get ctx.url: ', ctx.url,ctx.path);
+      console.log('get seoPages: ', seoPages, seoPath)
+
+      // seoPages.map(seoPage => {
+      //   if ('/' + seoPage === ctx.path) {
+      //     return ctx.render(seoPath + ctx.path);
+      //   }
+      // });
+
+      for (let i=0; i<seoPages.length; i++) {
+        const seoPage = seoPages[i];
+
+        if (ctx.path === '/') {
+          return ctx.render(seoPath + '/index');
+          break;
+        } else if ('/' + seoPage === ctx.path) {
+          return ctx.render(seoPath + ctx.path);
+          break;
         }
-      })
-    }
-
-    if (!matched) {
-      return ctx.render('index', {});
+      }
     } else {
-      return ctx.body = result;
+      if (mock) {
+        ${JSON.stringify(mockRoutes || [])}.map(route => {
+          if (route && !matched && (ctx.request.method).toLowerCase() === (route.method || '').toLowerCase() && ctx.request.path === route.path) {
+            matched = true;
+            result = route.result || {};
+          }
+        })
+      }
+
+      if (!matched) {
+        return ctx.render('index', {});
+      } else {
+        return ctx.body = result;
+      }
     }
   } else {
     let url = ctx.url || '/';
