@@ -67,13 +67,11 @@ function loadRoutes(path: string): MockDataInfo[] {
 function loadPages(path: string): string[] {
   const data: string[] = [];
 
-  console.log('get path in loadPages: ', path);
   if (Fs.pathExistsSync(path)) {
     Fs.readdirSync(path).map((file: string) => {
       const fileReg = /^(.+)\.html$/;
       const fileMatches = fileReg.exec(file);
 
-      console.log('get fileMatches in loadPages: ', fileMatches);
       if (fileMatches && fileMatches[1]) {
         data.push(fileMatches[1]);
       }
@@ -203,20 +201,9 @@ app.use(async (ctx, next) => {
     const isSpider = spiderUA.test(userAgent);
     const seoPath = '${seoPath}';
 
-    console.log('get user agent : ', userAgent)
-
     if (isSpider) {
       let url = ctx.url || '/';
       const seoPages = ${JSON.stringify(seoMappings)};
-
-      console.log('get ctx.url: ', ctx.url,ctx.path);
-      console.log('get seoPages: ', seoPages, seoPath)
-
-      // seoPages.map(seoPage => {
-      //   if ('/' + seoPage === ctx.path) {
-      //     return ctx.render(seoPath + ctx.path);
-      //   }
-      // });
 
       for (let i=0; i<seoPages.length; i++) {
         const seoPage = seoPages[i];
@@ -256,8 +243,6 @@ app.use(async (ctx, next) => {
     pages.push('');
     url = url.slice(1, url.length);
     matchedUrl = matchedUrl && matchedUrl.slice(1, matchedUrl.length);
-
-    console.log('get request: ', url, matchedUrl);
 
     if (pages.indexOf(url) > -1) {
       return ctx.render(!url ? 'index' : url, {});
