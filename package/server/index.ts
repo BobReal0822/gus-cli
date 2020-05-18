@@ -199,7 +199,7 @@ app.use(async (ctx, next) => {
     let matched = false;
     let result = {};
     const userAgent = ctx.headers['user-agent'];
-    const spiderUA = /Chrome|Baiduspider|bingbot|Googlebot|360spider|Sogou|Yahoo! Slurp/;
+    const spiderUA = /Baiduspider|bingbot|Googlebot|360spider|Sogou|Yahoo! Slurp/;
     const isSpider = spiderUA.test(userAgent);
     const seoPath = '${seoPath}';
 
