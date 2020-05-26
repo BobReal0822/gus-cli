@@ -146,10 +146,9 @@ export class Server<T extends BaseServerConfigInfo> {
     const { mock, seo } = this.config as any;
     const mockRouterPath = mock && Path.resolve(mock.path);
     const mockRoutes = mock && loadRoutes(mockRouterPath);
-    const seoMappings = seo.path
-      ? loadPages(Path.resolve(server.view, seo.path))
-      : [];
-    const seoPath = seo.path || '';
+    const seoMappings =
+      seo && seo.path ? loadPages(Path.resolve(server.view, seo.path)) : [];
+    const seoPath = (seo && seo.path) || '';
     // const nodeEnv = process.env.NODE_ENV;
 
     return `
@@ -201,7 +200,7 @@ app.use(async (ctx, next) => {
     const isSpider = spiderUA.test(userAgent);
     const seoPath = '${seoPath}';
 
-    if (isSpider) {
+    if (seoPath && isSpider) {
       let url = ctx.url || '/';
       const seoPages = ${JSON.stringify(seoMappings)};
 
