@@ -70,6 +70,10 @@ export const webpackConfig = (options: WebpackConfigInfo, useOss: boolean) => {
               loader: 'babel-loader',
               options: {
                 presets: [
+                  ["env", {
+                    "modules": false
+                  }],
+                  'stage-0',
                   'react'
                 ],
                 plugins: [
